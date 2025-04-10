@@ -1,0 +1,3796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Ultimate Air Freshener Calculator PRO</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --accent-color: #e74c3c;
+      --light-bg: #f9f9f9;
+      --card-bg: #ffffff;
+      --text-dark: #34495e;
+      --text-light: #7f8c8d;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --calendar-bg: #f8f9fa;
+      --labor-cost-color: #9b59b6;
+      --intensity-light: #aed6f1;
+      --intensity-medium: #3498db;
+      --intensity-strong: #21618c;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 20px auto;
+      max-width: 1300px;
+      background-color: var(--light-bg);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      color: var(--secondary-color);
+      margin-bottom: 30px;
+      letter-spacing: 0.5px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: var(--primary-color);
+      border-radius: 3px;
+    }
+
+    h1 span {
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    h2 {
+      color: var(--secondary-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 8px;
+      margin-top: 30px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 15px;
+      color: var(--text-dark);
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    input, select, button, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      outline: none;
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    button.secondary {
+      background-color: var(--text-light);
+    }
+
+    button.danger {
+      background-color: var(--accent-color);
+    }
+
+    button.labor {
+      background-color: var(--labor-cost-color);
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .result {
+      background-color: #e8f8f5;
+      padding: 25px;
+      margin-top: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      border-left: 5px solid var(--primary-color);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .result-item {
+      background-color: white;
+      padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .result-item h4 {
+      margin-top: 0;
+      color: var(--secondary-color);
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    .highlight {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .highlight-profit {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--success-color);
+    }
+
+    .highlight-time {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--warning-color);
+    }
+
+    .highlight-labor {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--labor-cost-color);
+    }
+
+    .note {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .calendar {
+      margin-top: 20px;
+      background-color: var(--calendar-bg);
+      border-radius: 8px;
+      padding: 15px;
+      overflow-x: auto;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-weight: bold;
+      padding: 5px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 4px;
+    }
+
+    .calendar-day {
+      height: 80px;
+      padding: 5px;
+      border: 1px solid #ddd;
+      background-color: white;
+      position: relative;
+    }
+
+    .calendar-day.empty {
+      background-color: var(--calendar-bg);
+      border: none;
+    }
+
+    .calendar-day-number {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .calendar-event {
+      font-size: 12px;
+      background-color: #e3f2fd;
+      border-left: 3px solid var(--primary-color);
+      padding: 2px 4px;
+      margin: 2px 0;
+      border-radius: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .calendar-event.production {
+      background-color: #e8f5e9;
+      border-left-color: var(--success-color);
+    }
+
+    .calendar-event.curing {
+      background-color: #fff3e0;
+      border-left-color: var(--warning-color);
+    }
+
+    .calendar-event.shipping {
+      background-color: #f3e5f5;
+      border-left-color: #9c27b0;
+    }
+
+    .calendar-event.rush {
+      background-color: #ffebee;
+      border-left-color: var(--accent-color);
+    }
+
+    .calendar-event.wholesale {
+      background-color: #e3f2fd;
+      border-left-color: var(--primary-color);
+    }
+
+    .calendar-event.special {
+      background-color: #fff8e1;
+      border-left-color: #ffa000;
+    }
+
+    /* Tooltip styles for calendar events */
+    .calendar-event::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+      z-index: 10;
+    }
+
+    .calendar-event:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .timeline {
+      margin-top: 20px;
+    }
+
+    .timeline-item {
+      display: flex;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .timeline-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .timeline-badge.production {
+      background-color: var(--success-color);
+    }
+
+    .timeline-badge.curing {
+      background-color: var(--warning-color);
+    }
+
+    .timeline-badge.shipping {
+      background-color: #9c27b0;
+    }
+
+    .timeline-content {
+      flex-grow: 1;
+    }
+
+    .timeline-date {
+      font-weight: bold;
+      margin-right: 10px;
+      min-width: 120px;
+    }
+
+    .order-list {
+      margin-top: 20px;
+    }
+
+    .order-item {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--primary-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .order-item.rush {
+      border-left-color: var(--accent-color);
+    }
+
+    .order-item.wholesale {
+      border-left-color: var(--primary-color);
+    }
+
+    .order-item.special {
+      border-left-color: #ffa000;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .order-title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .order-meta {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .order-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .order-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .order-actions button {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .rush-badge {
+      background-color: var(--accent-color);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .wholesale-badge {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .special-badge {
+      background-color: #ffa000;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      border-bottom-color: var(--primary-color);
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .labor-cost-analysis {
+      margin-top: 20px;
+    }
+
+    .labor-cost-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .labor-cost-item {
+      background-color: white;
+      padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--labor-cost-color);
+    }
+
+    .what-if-scenario {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+
+    .what-if-results {
+      margin-top: 15px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Drag and Drop Styles */
+    .order-item[draggable="true"] {
+      cursor: grab;
+    }
+
+    .order-item.dragging {
+      opacity: 0.5;
+      transform: scale(0.98);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .order-item.drag-over {
+      border: 2px dashed var(--primary-color);
+      background-color: #f0f8ff;
+    }
+
+    /* New Styles for Enhanced Features */
+    .chart-container {
+      margin-top: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .scent-profile {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .scent-profile-item {
+      background-color: white;
+      padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .intensity-indicator {
+      height: 20px;
+      border-radius: 10px;
+      margin-top: 5px;
+      background: linear-gradient(to right, var(--intensity-light), var(--intensity-medium), var(--intensity-strong));
+      position: relative;
+    }
+
+    .intensity-marker {
+      position: absolute;
+      width: 2px;
+      height: 30px;
+      background-color: black;
+      top: -5px;
+      transform: translateX(-50%);
+    }
+
+    .scent-type-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .scent-type-card {
+      padding: 15px;
+      border-radius: 6px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .scent-type-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .scent-type-card.selected {
+      border-color: var(--primary-color);
+      background-color: #f0f8ff;
+    }
+
+    .scent-type-card h4 {
+      margin-top: 0;
+      color: var(--secondary-color);
+    }
+
+    .recommendation-card {
+      background-color: #e8f8f5;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 4px solid var(--success-color);
+      margin-top: 15px;
+    }
+
+    .room-size-selector {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .room-size-option {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: white;
+      cursor: pointer;
+      border: 2px solid #ddd;
+      transition: all 0.3s;
+    }
+
+    .room-size-option.selected {
+      border-color: var(--primary-color);
+      background-color: #f0f8ff;
+    }
+
+    .airflow-selector {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .airflow-option {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: white;
+      cursor: pointer;
+      border: 2px solid #ddd;
+      transition: all 0.3s;
+    }
+
+    .airflow-option.selected {
+      border-color: var(--primary-color);
+      background-color: #f0f8ff;
+    }
+
+    .pricing-tier {
+      background-color: white;
+      padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      margin-bottom: 15px;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .pricing-tier h4 {
+      margin-top: 0;
+      color: var(--secondary-color);
+    }
+
+    .subscription-card {
+      background-color: #fff8e1;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 4px solid #ffa000;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+      
+      .calendar-grid {
+        grid-template-columns: repeat(7, 120px);
+      }
+
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .order-meta {
+        margin-top: 5px;
+      }
+
+      .room-size-selector, .airflow-selector {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Ultimate <span>PRO</span> Air Freshener Calculator</h1>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="calculator">Calculator</div>
+    <div class="tab" data-tab="scent">Scent Science</div>
+    <div class="tab" data-tab="visualization">Visualization</div>
+    <div class="tab" data-tab="orders">Order Schedule</div>
+    <div class="tab" data-tab="labor">Labor Analysis</div>
+    <div class="tab" data-tab="gantt">Gantt Chart</div>
+    <div class="tab" data-tab="commercial">Commercial Tools</div>
+  </div>
+
+  <!-- Calculator Tab -->
+  <div class="tab-content active" id="calculator-tab">
+    <!-- Existing calculator content remains the same -->
+    <!-- ... -->
+    <div class="card">
+      <h2>Order Information</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="orderName">Order Name/Client:</label>
+          <input type="text" id="orderName" placeholder="e.g., Spring Wedding, Coffee Shop Chain, Holiday Peppermint">
+          <p class="note">Use to track client names or special orders</p>
+        </div>
+
+        <div class="input-group">
+          <label for="orderType">Order Type:</label>
+          <select id="orderType">
+            <option value="standard">Standard</option>
+            <option value="rush">Rush Order</option>
+            <option value="wholesale">Wholesale</option>
+            <option value="special">Special Project</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="orderDueDate">Due Date (optional):</label>
+          <input type="date" id="orderDueDate">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Environmental Factors</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="environmentPreset">Environment Preset:</label>
+          <select id="environmentPreset">
+            <option value="">Custom</option>
+            <option value="hotDry">Hot & Dry (90°F, 20%)</option>
+            <option value="hotHumid">Hot & Humid (90°F, 70%)</option>
+            <option value="mild">Mild (72°F, 50%)</option>
+            <option value="coolDry">Cool & Dry (60°F, 30%)</option>
+            <option value="coolHumid">Cool & Humid (60°F, 70%)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="temperature">Ambient Temperature (°F):</label>
+          <input type="number" id="temperature" placeholder="e.g., 72">
+          <p class="note">Higher temps speed up evaporation</p>
+        </div>
+
+        <div class="input-group">
+          <label for="humidity">Humidity (%):</label>
+          <input type="number" id="humidity" placeholder="e.g., 50">
+          <p class="note">Higher humidity slows down evaporation slightly</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">  
+      <h2>Material Specifications</h2>  
+      <div class="form-grid">  
+          <div class="input-group">  
+              <label for="length">Length of Cardstock (in):</label>  
+              <input type="number" id="length" step="0.01" placeholder="e.g., 8.5">  
+              <p class="note">Standard letter size is 8.5 × 11 inches</p>  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="width">Width of Cardstock (in):</label>  
+              <input type="number" id="width" step="0.01" placeholder="e.g., 11">  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="thickness">Cardstock Thickness (mm):</label>  
+              <select id="thickness">  
+                  <option value="2">2mm (Standard)</option>  
+                  <option value="3">3mm (Premium)</option>  
+                  <option value="custom">Custom</option>  
+              </select>  
+          </div>  
+            
+          <div class="input-group hidden" id="customThicknessGroup">  
+              <label for="customThickness">Custom Thickness (mm):</label>  
+              <input type="number" id="customThickness" step="0.1" min="0.1">  
+          </div>  
+      </div>  
+    </div>  
+
+    <div class="card">  
+      <h2>Oil Absorption Data</h2>  
+      <div class="form-grid">  
+          <div class="input-group">  
+              <label for="dryWeight">Dry Weight of Cardstock (oz):</label>  
+              <input type="number" id="dryWeight" step="0.001" placeholder="e.g., 0.5">  
+              <p class="note">Weight before adding any oils</p>  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="absorbedWeight">Saturated Weight of Cardstock (oz):</label>  
+              <input type="number" id="absorbedWeight" step="0.001" placeholder="e.g., 0.8">  
+              <p class="note">Weight after full oil saturation</p>  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="absorptionAdjustment">Absorption Adjustment Factor:</label>  
+              <select id="absorptionAdjustment">  
+                  <option value="1">Full Saturation (100%) - Maximum Scent</option>  
+                  <option value="0.8" selected>Practical Saturation (80%) - Balanced Diffusion</option>  
+                  <option value="0.7">Reduced Saturation (70%) - Slowest Release</option>  
+              </select>  
+          </div>  
+      </div>  
+    </div>  
+
+    <div class="card">  
+      <h2>Oil Formulation</h2>  
+      <div class="form-grid">  
+          <div class="input-group">  
+              <label for="fragranceRatio">Fragrance Oil Ratio (%):</label>  
+              <input type="number" id="fragranceRatio" value="70" min="0" max="100">  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="carrierOil">Carrier Oil Type:</label>  
+              <select id="carrierOil">  
+                  <option value="IPM" selected>Isopropyl Myristate (IPM)</option>  
+                  <option value="DPG">Dipropylene Glycol (DPG)</option>  
+                  <option value="FCO">Fractionated Coconut Oil (FCO)</option>  
+                  <option value="Alcohol">Alcohol (Fast-Evaporating)</option>  
+                  <option value="ExtraLongevity">Extra Longevity Blend (50% IPM + 50% DPG)</option>
+                  <option value="DPG_FCO">DPG + FCO Blend (70% DPG + 30% FCO)</option>
+                  <option value="Augeo">Augeo Oil</option>
+                  <option value="Almond">Almond Oil</option>
+                  <option value="Mineral">Mineral Oil</option>
+              </select>  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="costPerOzFragrance">Cost per oz of Fragrance Oil ($):</label>  
+              <input type="number" id="costPerOzFragrance" step="0.01" value="1.67" min="0">  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="costPerOzCarrier">Cost per oz of Carrier Oil ($):</label>  
+              <input type="number" id="costPerOzCarrier" step="0.01" value="0.50" min="0">  
+          </div>  
+
+          <div class="input-group">
+            <label for="costPerCardstock">Cost per Cardstock ($):</label>
+            <input type="number" id="costPerCardstock" step="0.01" value="0.25" min="0">
+            <p class="note">Cost for each blank cardstock</p>
+          </div>
+      </div>  
+        
+      <div id="carrierProperties" class="carrier-properties hidden">  
+          <h4>Selected Carrier Properties</h4>  
+          <p><strong>Evaporation Rate:</strong> <span id="evaporationRate">—</span></p>  
+          <p><strong>Recommended Use:</strong> <span id="recommendedUse">—</span></p>  
+          <p><strong>Notes:</strong> <span id="carrierNotes">—</span></p>  
+      </div>  
+    </div>  
+    
+    <div class="card">  
+      <h2>Production Parameters</h2>  
+      <div class="form-grid">  
+          <div class="input-group">  
+              <label for="quantity">Quantity of Cardstocks:</label>  
+              <input type="number" id="quantity" value="1" min="1">  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="freshenerArea">Individual Freshener Area (in²):</label>  
+              <input type="number" id="freshenerArea" step="0.1" placeholder="e.g., 12 for 3×4 inches">  
+          </div>  
+            
+          <div class="input-group">  
+              <label for="desiredLongevity">Desired Longevity (days):</label>  
+              <input type="number" id="desiredLongevity" step="1" min="1" placeholder="e.g., 30">  
+              <p class="note">Leave blank if you want the calculator to estimate</p>  
+          </div>  
+      </div>  
+    </div>
+
+    <div class="card">
+      <h2>Pricing & Profit Margin</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="sellingPrice">Selling Price per Freshener ($):</label>
+          <input type="number" id="sellingPrice" step="0.01" placeholder="e.g., 3.99" min="0">
+          <p class="note">Leave blank to calculate based on profit margin</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="profitMargin">Desired Profit Margin (%):</label>
+          <input type="number" id="profitMargin" step="1" value="50" min="0" max="100">
+          <p class="note">Percentage of selling price that is profit</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Production Timeline</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="prepTime">Preparation Time per Cardstock (minutes):</label>
+          <input type="number" id="prepTime" value="5" min="1">
+          <p class="note">Time to cut, apply oils, etc. per cardstock</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="curingTime">Curing Time (hours):</label>
+          <input type="number" id="curingTime" value="24" min="1">
+          <p class="note">Time needed for oils to fully absorb</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="batchCapacity">Batch Processing Capacity:</label>
+          <select id="batchCapacity">
+            <option value="1">1 cardstock at a time</option>
+            <option value="2">2 cardstocks at a time</option>
+            <option value="5" selected>5 cardstocks at a time</option>
+            <option value="10">10 cardstocks at a time</option>
+            <option value="20">20 cardstocks at a time</option>
+            <option value="50">50 cardstocks at a time</option>
+          </select>
+          <p class="note">How many cardstocks you can prepare simultaneously</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="dailyWorkHours">Daily Work Hours:</label>
+          <input type="number" id="dailyWorkHours" value="8" min="1" max="24">
+          <p class="note">How many hours per day you can work on production</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="packagingTime">Packaging Time per Order (minutes):</label>
+          <input type="number" id="packagingTime" value="15" min="1">
+          <p class="note">Time to package all fresheners from one order</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="shippingDays">Shipping Processing Days:</label>
+          <input type="number" id="shippingDays" value="1" min="0">
+          <p class="note">Days needed to process shipping after completion</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Labor Costs</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="hourlyRate">Hourly Labor Rate ($):</label>
+          <input type="number" id="hourlyRate" step="0.01" value="15.00" min="0">
+          <p class="note">Your hourly wage or cost of labor</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="rushSurcharge">Rush Order Surcharge (%):</label>
+          <input type="number" id="rushSurcharge" step="1" value="20" min="0">
+          <p class="note">Additional percentage for rush orders</p>
+        </div>
+        
+        <div class="input-group">
+          <label for="wholesaleDiscount">Wholesale Discount (%):</label>
+          <input type="number" id="wholesaleDiscount" step="1" value="15" min="0" max="50">
+          <p class="note">Discount applied to wholesale orders</p>
+        </div>
+      </div>
+    </div>
+    
+    <div id="error" class="error"></div>  
+    
+    <div class="button-group">  
+      <button id="calculate">Calculate</button>  
+      <button id="reset" class="secondary">Reset</button>  
+      <button id="saveAsPDF">Save as PDF</button>  
+      <button id="saveAsExcel">Save as Excel</button>  
+      <button id="saveOrder" class="labor">Save Order</button>
+    </div>  
+    
+    <div id="results" class="result hidden">  
+      <h2>Production Results</h2>  
+        
+      <div class="result-grid">  
+          <div class="result-item">  
+              <h4>Material Properties</h4>  
+              <p><strong>Cardstock Area:</strong> <span id="cardstockArea"></span> in²</p>  
+              <p><strong>Absorption Rate:</strong> <span id="absorptionRate"></span> oz/in²</p>  
+              <p><strong>Adjusted Absorption:</strong> <span id="adjustedAbsorption"></span></p>  
+              <p><strong>Fresheners per Cardstock:</strong> <span id="freshenersPerCardstock"></span></p>  
+              <p><strong>Total Fresheners:</strong> <span id="totalFresheners"></span></p>
+          </div>  
+            
+          <div class="result-item">  
+              <h4>Oil Requirements</h4>  
+              <p><strong>Total Oil Needed:</strong> <span id="totalOil"></span> oz</p>  
+              <p><strong>Fragrance Oil:</strong> <span id="fragranceOil"></span> oz</p>  
+              <p><strong>Carrier Oil:</strong> <span id="carrierOilAmount"></span> oz</p>  
+              <p><strong>Oil per Freshener:</strong> <span id="oilPerFreshener"></span> oz</p>  
+          </div>  
+            
+          <div class="result-item">  
+              <h4>Cost Analysis</h4>  
+              <p><strong>Fragrance Cost:</strong> <span id="fragranceCost"></span></p>  
+              <p><strong>Carrier Cost:</strong> <span id="carrierCost"></span></p>  
+              <p><strong>Cardstock Cost:</strong> <span id="cardstockCost"></span></p>
+              <p><strong>Total Production Cost:</strong> <span id="totalCost" class="highlight"></span></p>  
+              <p><strong>Cost per Freshener:</strong> <span id="costPerFreshener" class="highlight"></span></p>  
+          </div>  
+            
+          <div class="result-item">  
+              <h4>Performance</h4>  
+              <p><strong>Estimated Longevity:</strong> <span id="estimatedLongevity"></span> days</p>  
+              <p><strong>Daily Oil Loss:</strong> <span id="dailyOilLoss"></span> oz/day</p>  
+              <p><strong>Match to Desired Longevity:</strong> <span id="longevityMatch"></span></p>  
+              <p><strong>Recommended Adjustment:</strong> <span id="recommendedAdjustment"></span></p>  
+          </div>  
+      </div>  
+      
+      <div class="result-item" style="margin-top: 20px;">
+        <h4>Pricing & Profit Analysis</h4>
+        <p><strong>Cost per Freshener:</strong> <span id="costPerFreshenerProfit"></span></p>
+        <p><strong>Selling Price per Freshener:</strong> <span id="sellingPriceResult" class="highlight-profit"></span></p>
+        <p><strong>Profit per Freshener:</strong> <span id="profitPerFreshener" class="highlight-profit"></span></p>
+        <p><strong>Profit Margin:</strong> <span id="profitMarginResult" class="highlight-profit"></span></p>
+        <p><strong>Total Revenue:</strong> <span id="totalRevenue" class="highlight-profit"></span></p>
+        <p><strong>Total Profit:</strong> <span id="totalProfit" class="highlight-profit"></span></p>
+      </div>
+
+      <div class="result-item" style="margin-top: 20px;">
+        <h4>Production Timeline</h4>
+        <p><strong>Batch Processing:</strong> <span id="batchDetails"></span></p>
+        <p><strong>Total Preparation Time:</strong> <span id="totalPrepTime" class="highlight-time"></span></p>
+        <p><strong>Curing Time:</strong> <span id="totalCuringTime" class="highlight-time"></span></p>
+        <p><strong>Packaging Time:</strong> <span id="packagingTimeResult"></span></p>
+        <p><strong>Total Production Time:</strong> <span id="totalProductionTime" class="highlight-time"></span></p>
+        <p><strong>Estimated Completion Time:</strong> <span id="estimatedCompletion" class="highlight-time"></span></p>
+        <p><strong>Estimated Ship Date:</strong> <span id="estimatedShipDate" class="highlight-time"></span></p>
+      </div>
+      
+      <div class="labor-cost-analysis">
+        <h4>Labor Cost Analysis</h4>
+        <div class="labor-cost-grid">
+          <div class="labor-cost-item">
+            <h4>Labor Costs</h4>
+            <p><strong>Preparation Time Cost:</strong> <span id="prepTimeCost" class="highlight-labor"></span></p>
+            <p><strong>Packaging Time Cost:</strong> <span id="packagingCost" class="highlight-labor"></span></p>
+            <p><strong>Total Labor Cost:</strong> <span id="totalLaborCost" class="highlight-labor"></span></p>
+            <p><strong>Labor Cost per Freshener:</strong> <span id="laborCostPerFreshener" class="highlight-labor"></span></p>
+          </div>
+          
+          <div class="labor-cost-item">
+            <h4>Profit After Labor</h4>
+            <p><strong>Total Cost with Labor:</strong> <span id="totalCostWithLabor" class="highlight-labor"></span></p>
+            <p><strong>Cost per Freshener with Labor:</strong> <span id="costPerFreshenerWithLabor" class="highlight-labor"></span></p>
+            <p><strong>Profit per Freshener After Labor:</strong> <span id="profitAfterLabor" class="highlight-labor"></span></p>
+            <p><strong>Total Profit After Labor:</strong> <span id="totalProfitAfterLabor" class="highlight-labor"></span></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="timeline">
+        <h4>Production Timeline Breakdown</h4>
+        <div id="timelineItems"></div>
+      </div>
+      
+      <div class="calendar">
+        <h4>Production Calendar</h4>
+        <div class="calendar-header">
+          <span id="calendarMonthYear"></span>
+        </div>
+        <div class="calendar-grid" id="calendarDaysHeader"></div>
+        <div class="calendar-grid" id="calendarDays"></div>
+      </div>
+        
+      <div id="extraLongevityBreakdown" class="hidden" style="margin-top: 20px;">  
+          <h4>Extra Longevity Blend Breakdown</h4>  
+          <div class="result-grid">  
+              <div class="result-item">  
+                  <p><strong>IPM Amount:</strong> <span id="ipmAmount"></span> oz</p>  
+                  <p><strong>IPM Cost:</strong> <span id="ipmCost"></span></p>  
+              </div>  
+              <div class="result-item">  
+                  <p><strong>DPG Amount:</strong> <span id="dpgAmount"></span> oz</p>  
+                  <p><strong>DPG Cost:</strong> <span id="dpgCost"></span></p>  
+              </div>  
+          </div>  
+      </div>  
+      
+      <div id="dpgFcoBreakdown" class="hidden" style="margin-top: 20px;">  
+          <h4>DPG + FCO Blend Breakdown</h4>  
+          <div class="result-grid">  
+              <div class="result-item">  
+                  <p><strong>DPG Amount:</strong> <span id="dpgFco_dpgAmount"></span> oz</p>  
+                  <p><strong>DPG Cost:</strong> <span id="dpgFco_dpgCost"></span></p>  
+              </div>  
+              <div class="result-item">  
+                  <p><strong>FCO Amount:</strong> <span id="dpgFco_fcoAmount"></span> oz</p>  
+                  <p><strong>FCO Cost:</strong> <span id="dpgFco_fcoCost"></span></p>  
+              </div>  
+          </div>  
+      </div>  
+    </div>
+  </div>
+
+
+  <!-- New Scent Science Tab -->
+  <div class="tab-content" id="scent-tab">
+    <div class="card">
+      <h2>Scent Profile Analysis</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="scentType">Scent Type:</label>
+          <select id="scentType">
+            <option value="floral">Floral (e.g., rose, lavender)</option>
+            <option value="citrus">Citrus (e.g., lemon, orange)</option>
+            <option value="woody">Woody (e.g., sandalwood, cedar)</option>
+            <option value="fresh">Fresh (e.g., linen, ocean breeze)</option>
+            <option value="spicy">Spicy (e.g., cinnamon, clove)</option>
+            <option value="fruity">Fruity (e.g., apple, berry)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="scentIntensity">Desired Scent Intensity:</label>
+          <input type="range" id="scentIntensity" min="1" max="10" value="5">
+          <div class="intensity-indicator">
+            <div class="intensity-marker" style="left: 50%;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Light</span>
+            <span>Medium</span>
+            <span>Strong</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scent-profile">
+        <div class="scent-profile-item">
+          <h4>Recommended Formulation</h4>
+          <p><strong>Fragrance Ratio:</strong> <span id="recommendedRatio">70%</span></p>
+          <p><strong>Carrier Oil:</strong> <span id="recommendedCarrier">Isopropyl Myristate (IPM)</span></p>
+          <p><strong>Absorption Level:</strong> <span id="recommendedAbsorption">80%</span></p>
+        </div>
+
+        <div class="scent-profile-item">
+          <h4>Performance Profile</h4>
+          <p><strong>Estimated Longevity:</strong> <span id="estimatedLongevityScent">30 days</span></p>
+          <p><strong>Scent Throw:</strong> <span id="scentThrow">Medium</span></p>
+          <p><strong>Evaporation Rate:</strong> <span id="evaporationRateScent">Moderate</span></p>
+        </div>
+      </div>
+
+      <div class="recommendation-card">
+        <h4>Expert Recommendation</h4>
+        <p id="scentRecommendation">For floral scents, we recommend using a 70% fragrance ratio with IPM carrier oil for balanced longevity and scent throw. Consider increasing the ratio to 80% for stronger initial impact.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Room & Environment Factors</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Room Size:</label>
+          <div class="room-size-selector">
+            <div class="room-size-option selected" data-size="small">Small (≤100 sq ft)</div>
+            <div class="room-size-option" data-size="medium">Medium (100-300 sq ft)</div>
+            <div class="room-size-option" data-size="large">Large (≥300 sq ft)</div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Airflow Conditions:</label>
+          <div class="airflow-selector">
+            <div class="airflow-option selected" data-airflow="low">Low (e.g., bedroom)</div>
+            <div class="airflow-option" data-airflow="medium">Medium (e.g., living room)</div>
+            <div class="airflow-option" data-airflow="high">High (e.g., office, hallway)</div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="roomHumidity">Room Humidity (%):</label>
+          <input type="number" id="roomHumidity" min="0" max="100" value="50">
+        </div>
+
+        <div class="input-group">
+          <label for="roomTemperature">Room Temperature (°F):</label>
+          <input type="number" id="roomTemperature" value="72">
+        </div>
+      </div>
+
+      <div class="result-item" style="margin-top: 20px;">
+        <h4>Environment Impact</h4>
+        <p><strong>Scent Diffusion:</strong> <span id="scentDiffusion">Moderate spread</span></p>
+        <p><strong>Longevity Adjustment:</strong> <span id="longevityAdjustment">No significant impact</span></p>
+        <p><strong>Recommended Fresheners:</strong> <span id="recommendedFresheners">2-3 for complete coverage</span></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Scent Type Library</h2>
+      <p>Select a scent type for recommended formulations:</p>
+      
+      <div class="scent-type-grid">
+        <div class="scent-type-card selected" data-type="floral">
+          <h4>Floral</h4>
+          <p>Rose, Lavender, Jasmine</p>
+          <p class="note">Best with IPM or DPG carriers</p>
+        </div>
+        <div class="scent-type-card" data-type="citrus">
+          <h4>Citrus</h4>
+          <p>Lemon, Orange, Grapefruit</p>
+          <p class="note">Fast evaporation - use FCO blends</p>
+        </div>
+        <div class="scent-type-card" data-type="woody">
+          <h4>Woody</h4>
+          <p>Sandalwood, Cedar, Patchouli</p>
+          <p class="note">Long-lasting with mineral oil</p>
+        </div>
+        <div class="scent-type-card" data-type="fresh">
+          <h4>Fresh</h4>
+          <p>Linen, Ocean, Rain</p>
+          <p class="note">Medium ratio with DPG</p>
+        </div>
+        <div class="scent-type-card" data-type="spicy">
+          <h4>Spicy</h4>
+          <p>Cinnamon, Clove, Nutmeg</p>
+          <p class="note">High ratio for strong impact</p>
+        </div>
+        <div class="scent-type-card" data-type="fruity">
+          <h4>Fruity</h4>
+          <p>Apple, Berry, Peach</p>
+          <p class="note">Balanced with IPM or DPG</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualization Tab -->
+  <div class="tab-content" id="visualization-tab">
+    <div class="card">
+      <h2>Scent Longevity Visualization</h2>
+      <div class="chart-container">
+        <canvas id="longevityChart"></canvas>
+      </div>
+      <div class="button-group">
+        <button id="compareCarriers">Compare Carrier Oils</button>
+        <button id="compareRatios">Compare Fragrance Ratios</button>
+        <button id="resetChart">Reset View</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Scent Strength Over Time</h2>
+      <div class="chart-container">
+        <canvas id="strengthChart"></canvas>
+      </div>
+      <div class="form-grid" style="margin-top: 20px;">
+        <div class="input-group">
+          <label for="strengthTemperature">Temperature (°F):</label>
+          <input type="range" id="strengthTemperature" min="50" max="90" value="72">
+          <span id="strengthTempValue">72°F</span>
+        </div>
+        <div class="input-group">
+          <label for="strengthHumidity">Humidity (%):</label>
+          <input type="range" id="strengthHumidity" min="10" max="90" value="50">
+          <span id="strengthHumidityValue">50%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cost vs. Longevity Analysis</h2>
+      <div class="chart-container">
+        <canvas id="costChart"></canvas>
+      </div>
+      <div class="result-item" style="margin-top: 20px;">
+        <h4>Optimal Formulation</h4>
+        <p><strong>Best Value:</strong> <span id="bestValueFormulation">70% ratio with IPM</span></p>
+        <p><strong>Cost per Day:</strong> <span id="costPerDay">$0.12/day</span></p>
+        <p><strong>Recommendation:</strong> <span id="formulationRecommendation">This formulation provides the best balance between cost and longevity for most applications.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Tab (existing but enhanced) -->
+  <div class="tab-content" id="orders-tab">
+    <!-- Existing orders content enhanced with scent info -->
+    <!-- ... -->
+    <div class="card">
+      <h2>Order Schedule</h2>
+      <p>View and manage all your scheduled orders.</p>
+      
+      <div class="what-if-scenario">
+        <h3>What-If Scenario</h3>
+        <p>See how adding a new order would affect your schedule:</p>
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="whatIfQuantity">Quantity:</label>
+            <input type="number" id="whatIfQuantity" min="1" value="10">
+          </div>
+          <div class="input-group">
+            <label for="whatIfPrepTime">Prep Time (min per cardstock):</label>
+            <input type="number" id="whatIfPrepTime" min="1" value="5">
+          </div>
+          <div class="input-group">
+            <label for="whatIfType">Order Type:</label>
+            <select id="whatIfType">
+              <option value="standard">Standard</option>
+              <option value="rush">Rush</option>
+              <option value="wholesale">Wholesale</option>
+              <option value="special">Special</option>
+            </select>
+          </div>
+        </div>
+        <button id="runWhatIf" class="secondary">Run Scenario</button>
+        
+        <div id="whatIfResults" class="what-if-results hidden">
+          <h4>Scenario Results</h4>
+          <p><strong>Would add:</strong> <span id="whatIfTimeAdded"></span> to your schedule</p>
+          <p><strong>New completion date:</strong> <span id="whatIfNewCompletion"></span></p>
+          <p><strong>Labor cost impact:</strong> <span id="whatIfLaborImpact"></span></p>
+          <button id="addWhatIfOrder" class="labor">Add This Order</button>
+        </div>
+      </div>
+      
+      <div class="order-list" id="orderList">
+        <!-- Orders will be added here dynamically -->
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Labor Analysis Tab (existing) -->
+  <div class="tab-content" id="labor-tab">
+    <!-- Existing labor content -->
+    <!-- ... -->
+    <div class="card">
+      <h2>Labor Cost Analysis</h2>
+      <p>Understand how labor costs affect your profitability and when to hire help.</p>
+      
+      <div class="result-grid">
+        <div class="result-item">
+          <h4>Current Workload</h4>
+          <p><strong>Total Scheduled Hours:</strong> <span id="totalScheduledHours">0</span></p>
+          <p><strong>Peak Daily Hours:</strong> <span id="peakDailyHours">0</span></p>
+          <p><strong>Days Over Capacity:</strong> <span id="daysOverCapacity">0</span></p>
+        </div>
+        
+        <div class="result-item">
+          <h4>Labor Cost Summary</h4>
+          <p><strong>Current Labor Cost:</strong> <span id="currentLaborCost">$0.00</span></p>
+          <p><strong>Potential Additional Staff Cost:</strong> <span id="additionalStaffCost">$0.00</span></p>
+          <p><strong>Potential Time Savings:</strong> <span id="timeSavings">0 days</span></p>
+        </div>
+      </div>
+      
+      <div class="labor-cost-analysis">
+        <h3>Hiring Justification Calculator</h3>
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="staffHourlyRate">Additional Staff Hourly Rate ($):</label>
+            <input type="number" id="staffHourlyRate" step="0.01" value="15.00" min="0">
+          </div>
+          <div class="input-group">
+            <label for="staffHoursPerDay">Staff Hours Per Day:</label>
+            <input type="number" id="staffHoursPerDay" value="8" min="1" max="24">
+          </div>
+          <div class="input-group">
+            <label for="staffProductivity">Productivity Increase (%):</label>
+            <input type="number" id="staffProductivity" value="30" min="0" max="100">
+            <p class="note">Estimated increase in production capacity</p>
+          </div>
+        </div>
+        <button id="calculateHiring" class="labor">Calculate Hiring Impact</button>
+        
+        <div id="hiringResults" class="what-if-results hidden">
+          <h4>Hiring Impact</h4>
+          <p><strong>Time Reduction:</strong> <span id="hiringTimeReduction"></span></p>
+          <p><strong>Additional Labor Cost:</strong> <span id="hiringLaborCost"></span></p>
+          <p><strong>Net Profit Impact:</strong> <span id="hiringNetImpact"></span></p>
+          <p><strong>Break-even Order Volume:</strong> <span id="breakEvenVolume"></span></p>
+        </div>
+      </div>
+      
+      <div class="result-item" style="margin-top: 20px;">
+        <h4>Small Batch Premium Pricing</h4>
+        <p>Small batches have higher labor costs per unit. Use this calculator to determine appropriate pricing for small orders.</p>
+        
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="smallBatchSize">Batch Size:</label>
+            <input type="number" id="smallBatchSize" value="10" min="1">
+          </div>
+          <div class="input-group">
+            <label for="smallBatchPrepTime">Prep Time (min per cardstock):</label>
+            <input type="number" id="smallBatchPrepTime" value="5" min="1">
+          </div>
+        </div>
+        <button id="calculateSmallBatch" class="secondary">Calculate</button>
+        
+        <div id="smallBatchResults" class="what-if-results hidden">
+          <p><strong>Labor Cost per Unit:</strong> <span id="smallBatchLaborCost"></span></p>
+          <p><strong>Recommended Minimum Price:</strong> <span id="smallBatchMinPrice"></span></p>
+          <p><strong>Premium Pricing Suggestion:</strong> <span id="smallBatchPremiumPrice"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <!-- Gantt Chart Tab (existing) -->
+  <div class="tab-content" id="gantt-tab">
+    <!-- Existing Gantt content -->
+    <!-- ... -->
+    <div class="card">
+      <h2>Production Gantt Chart</h2>
+      <p>Visual timeline of all your orders and their production phases.</p>
+      
+      <div class="gantt-container" id="ganttChart">
+        <!-- Gantt chart will be rendered here -->
+      </div>
+      
+      <div class="gantt-legend" style="margin-top: 20px;">
+        <h4>Legend</h4>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #e8f5e9; border-left: 3px solid #2ecc71; margin-right: 8px;"></div>
+            <span>Production</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #fff3e0; border-left: 3px solid #f39c12; margin-right: 8px;"></div>
+            <span>Curing</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #f3e5f5; border-left: 3px solid #9c27b0; margin-right: 8px;"></div>
+            <span>Shipping Prep</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <div style="width: 20px; height: 20px; background-color: #ffebee; border-left: 3px solid #e74c3c; margin-right: 8px;"></div>
+            <span>Rush Orders</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- New Commercial Tools Tab -->
+  <div class="tab-content" id="commercial-tab">
+    <div class="card">
+      <h2>Wholesale Pricing Calculator</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="wholesaleQuantity">Order Quantity:</label>
+          <input type="number" id="wholesaleQuantity" min="1" value="100">
+        </div>
+        <div class="input-group">
+          <label for="wholesaleBasePrice">Base Price per Unit ($):</label>
+          <input type="number" id="wholesaleBasePrice" step="0.01" value="3.99">
+        </div>
+        <div class="input-group">
+          <label for="wholesaleTier1">Tier 1 Quantity (5% discount):</label>
+          <input type="number" id="wholesaleTier1" min="1" value="50">
+        </div>
+        <div class="input-group">
+          <label for="wholesaleTier2">Tier 2 Quantity (10% discount):</label>
+          <input type="number" id="wholesaleTier2" min="1" value="100">
+        </div>
+        <div class="input-group">
+          <label for="wholesaleTier3">Tier 3 Quantity (15% discount):</label>
+          <input type="number" id="wholesaleTier3" min="1" value="250">
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="calculateWholesale">Calculate Pricing</button>
+      </div>
+
+      <div id="wholesaleResults" class="result hidden">
+        <h3>Wholesale Pricing Tiers</h3>
+        <div class="pricing-tier">
+          <h4>Standard Retail</h4>
+          <p><strong>Price:</strong> <span id="retailPrice">$3.99</span> per unit</p>
+          <p><strong>Minimum Order:</strong> 1 unit</p>
+        </div>
+        <div class="pricing-tier">
+          <h4>Tier 1 Wholesale</h4>
+          <p><strong>Price:</strong> <span id="tier1Price">$3.79</span> per unit (5% off)</p>
+          <p><strong>Minimum Order:</strong> <span id="tier1Min">50</span> units</p>
+          <p><strong>Total Value:</strong> <span id="tier1Total">$189.50</span></p>
+        </div>
+        <div class="pricing-tier">
+          <h4>Tier 2 Wholesale</h4>
+          <p><strong>Price:</strong> <span id="tier2Price">$3.59</span> per unit (10% off)</p>
+          <p><strong>Minimum Order:</strong> <span id="tier2Min">100</span> units</p>
+          <p><strong>Total Value:</strong> <span id="tier2Total">$359.00</span></p>
+        </div>
+        <div class="pricing-tier">
+          <h4>Tier 3 Wholesale</h4>
+          <p><strong>Price:</strong> <span id="tier3Price">$3.39</span> per unit (15% off)</p>
+          <p><strong>Minimum Order:</strong> <span id="tier3Min">250</span> units</p>
+          <p><strong>Total Value:</strong> <span id="tier3Total">$847.50</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Subscription Model Calculator</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="subMonthlyPrice">Monthly Price ($):</label>
+          <input type="number" id="subMonthlyPrice" step="0.01" value="9.99">
+        </div>
+        <div class="input-group">
+          <label for="subFreshenersPerMonth">Fresheners per Month:</label>
+          <input type="number" id="subFreshenersPerMonth" min="1" value="3">
+        </div>
+        <div class="input-group">
+          <label for="subCostPerFreshener">Your Cost per Freshener ($):</label>
+          <input type="number" id="subCostPerFreshener" step="0.01" value="1.50">
+        </div>
+        <div class="input-group">
+          <label for="subRetentionMonths">Average Customer Retention (months):</label>
+          <input type="number" id="subRetentionMonths" min="1" value="6">
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="calculateSubscription">Calculate Subscription</button>
+      </div>
+
+      <div id="subscriptionResults" class="result hidden">
+        <div class="subscription-card">
+          <h4>Subscription Profitability</h4>
+          <p><strong>Monthly Revenue per Customer:</strong> <span id="subMonthlyRevenue">$9.99</span></p>
+          <p><strong>Monthly Cost per Customer:</strong> <span id="subMonthlyCost">$4.50</span></p>
+          <p><strong>Monthly Profit per Customer:</strong> <span id="subMonthlyProfit">$5.49</span></p>
+          <p><strong>Lifetime Value (LTV):</strong> <span id="subLTV">$32.94</span></p>
+          <p><strong>Break-even Acquisition Cost:</strong> <span id="subBreakEven">$32.94</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Bulk Discount Analyzer</h2>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="bulkBaseCost">Base Production Cost per Unit ($):</label>
+          <input type="number" id="bulkBaseCost" step="0.01" value="1.50">
+        </div>
+        <div class="input-group">
+          <label for="bulkRetailPrice">Retail Price per Unit ($):</label>
+          <input type="number" id="bulkRetailPrice" step="0.01" value="3.99">
+        </div>
+        <div class="input-group">
+          <label for="bulkDiscount">Discount Percentage (%):</label>
+          <input type="number" id="bulkDiscount" min="0" max="100" value="20">
+        </div>
+        <div class="input-group">
+          <label for="bulkMinOrder">Minimum Order Quantity:</label>
+          <input type="number" id="bulkMinOrder" min="1" value="50">
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="calculateBulk">Analyze Discount</button>
+      </div>
+
+      <div id="bulkResults" class="result hidden">
+        <h3>Bulk Discount Analysis</h3>
+        <div class="result-grid">
+          <div class="result-item">
+            <h4>Standard Sale</h4>
+            <p><strong>Profit per Unit:</strong> <span id="standardProfit">$2.49</span></p>
+            <p><strong>50 Units Profit:</strong> <span id="standardTotalProfit">$124.50</span></p>
+          </div>
+          <div class="result-item">
+            <h4>Bulk Discount Sale</h4>
+            <p><strong>Discounted Price:</strong> <span id="bulkPrice">$3.19</span></p>
+            <p><strong>Profit per Unit:</strong> <span id="bulkProfit">$1.69</span></p>
+            <p><strong>50 Units Profit:</strong> <span id="bulkTotalProfit">$84.50</span></p>
+          </div>
+          <div class="result-item">
+            <h4>Comparison</h4>
+            <p><strong>Profit Difference:</strong> <span id="profitDifference">-$40.00</span></p>
+            <p><strong>Units Needed to Match:</strong> <span id="unitsToMatch">74</span></p>
+            <p><strong>Recommendation:</strong> <span id="bulkRecommendation">Consider a higher minimum order quantity or smaller discount percentage</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Enhanced carrier properties with scent profiles
+  const carrierProperties = {
+    IPM: {
+      name: "Isopropyl Myristate",
+      evaporationRate: "Moderate (3.5% per day)",
+      baseEvaporation: 0.035,
+      notes: "21–30 days longevity",
+      scentThrow: "Medium",
+      cost: 0.50,
+      bestFor: ["floral", "fruity", "fresh"],
+      notRecommendedFor: ["citrus"]
+    },
+    DPG: {
+      name: "Dipropylene Glycol",
+      evaporationRate: "Slow (2.5% per day)",
+      baseEvaporation: 0.025,
+      notes: "28–40 days longevity",
+      scentThrow: "Medium-Strong",
+      cost: 0.45,
+      bestFor: ["floral", "fresh", "spicy"],
+      notRecommendedFor: ["citrus"]
+    },
+    FCO: {
+      name: "Fractionated Coconut Oil",
+      evaporationRate: "Very Slow (1.5% per day)",
+      baseEvaporation: 0.015,
+      notes: "40–60 days longevity",
+      scentThrow: "Subtle",
+      cost: 0.60,
+      bestFor: ["woody", "spicy"],
+      notRecommendedFor: ["citrus", "fresh"]
+    },
+    Alcohol: {
+      name: "Alcohol",
+      evaporationRate: "Very Fast (7% per day)",
+      baseEvaporation: 0.07,
+      notes: "7–14 days longevity",
+      scentThrow: "Strong initial burst",
+      cost: 0.30,
+      bestFor: ["citrus"],
+      notRecommendedFor: ["woody", "spicy"]
+    },
+    ExtraLongevity: {
+      name: "Extra Longevity Blend",
+      evaporationRate: "Very Slow (2% per day)",
+      baseEvaporation: 0.02,
+      notes: "35–50 days longevity (50% IPM + 50% DPG)",
+      scentThrow: "Medium",
+      cost: 0.48,
+      bestFor: ["floral", "fruity", "fresh"],
+      notRecommendedFor: ["citrus"]
+    },
+    DPG_FCO: {
+      name: "DPG + FCO Blend",
+      evaporationRate: "Slow-Moderate (2% per day)",
+      baseEvaporation: 0.02,
+      notes: "30–45 days longevity (70% DPG + 30% FCO)",
+      scentThrow: "Medium",
+      cost: 0.52,
+      bestFor: ["woody", "spicy", "floral"],
+      notRecommendedFor: ["citrus"]
+    },
+    Augeo: {
+      name: "Augeo Oil",
+      evaporationRate: "Slow (2.2% per day)",
+      baseEvaporation: 0.022,
+      notes: "30–45 days longevity, eco-friendly",
+      scentThrow: "Medium-Strong",
+      cost: 0.65,
+      bestFor: ["all"],
+      notRecommendedFor: []
+    },
+    Almond: {
+      name: "Almond Oil",
+      evaporationRate: "Very Slow (1.8% per day)",
+      baseEvaporation: 0.018,
+      notes: "35–55 days longevity, natural option",
+      scentThrow: "Subtle",
+      cost: 0.70,
+      bestFor: ["floral", "fruity"],
+      notRecommendedFor: ["citrus", "fresh"]
+    },
+    Mineral: {
+      name: "Mineral Oil",
+      evaporationRate: "Extremely Slow (1.2% per day)",
+      baseEvaporation: 0.012,
+      notes: "45–65 days longevity, stable base",
+      scentThrow: "Subtle",
+      cost: 0.40,
+      bestFor: ["woody", "spicy"],
+      notRecommendedFor: ["citrus", "fresh"]
+    }
+  };
+
+  // Scent type profiles
+  const scentProfiles = {
+    floral: {
+      name: "Floral",
+      recommendedRatio: 70,
+      recommendedCarriers: ["IPM", "DPG", "ExtraLongevity", "Augeo"],
+      longevity: 30,
+      evaporationBoost: 1.0,
+      notes: "Floral scents benefit from moderate ratios and carriers that preserve their delicate notes."
+    },
+    citrus: {
+      name: "Citrus",
+      recommendedRatio: 80,
+      recommendedCarriers: ["Alcohol", "Augeo"],
+      longevity: 20,
+      evaporationBoost: 1.3,
+      notes: "Citrus scents evaporate quickly - use higher ratios and fast carriers for best results."
+    },
+    woody: {
+      name: "Woody",
+      recommendedRatio: 60,
+      recommendedCarriers: ["FCO", "Mineral", "DPG_FCO"],
+      longevity: 45,
+      evaporationBoost: 0.8,
+      notes: "Woody scents last longer naturally - use lower ratios with slow-evaporating carriers."
+    },
+    fresh: {
+      name: "Fresh",
+      recommendedRatio: 75,
+      recommendedCarriers: ["DPG", "ExtraLongevity", "Augeo"],
+      longevity: 25,
+      evaporationBoost: 1.1,
+      notes: "Fresh scents benefit from carriers that provide consistent diffusion over time."
+    },
+    spicy: {
+      name: "Spicy",
+      recommendedRatio: 65,
+      recommendedCarriers: ["FCO", "Mineral", "DPG_FCO"],
+      longevity: 40,
+      evaporationBoost: 0.9,
+      notes: "Spicy scents can be overpowering - moderate ratios work best for balanced diffusion."
+    },
+    fruity: {
+      name: "Fruity",
+      recommendedRatio: 70,
+      recommendedCarriers: ["IPM", "DPG", "Augeo"],
+      longevity: 28,
+      evaporationBoost: 1.0,
+      notes: "Fruity scents work well with standard formulations for balanced performance."
+    }
+  };
+
+  // Room size factors
+  const roomFactors = {
+    small: {
+      name: "Small (≤100 sq ft)",
+      coverage: 1,
+      diffusion: 0.8,
+      longevityImpact: 1.1
+    },
+    medium: {
+      name: "Medium (100-300 sq ft)",
+      coverage: 2,
+      diffusion: 1.0,
+      longevityImpact: 1.0
+    },
+    large: {
+      name: "Large (≥300 sq ft)",
+      coverage: 3,
+      diffusion: 1.2,
+      longevityImpact: 0.9
+    }
+  };
+
+  // Airflow factors
+  const airflowFactors = {
+    low: {
+      name: "Low (e.g., bedroom)",
+      diffusion: 0.7,
+      longevityImpact: 1.2
+    },
+    medium: {
+      name: "Medium (e.g., living room)",
+      diffusion: 1.0,
+      longevityImpact: 1.0
+    },
+    high: {
+      name: "High (e.g., office, hallway)",
+      diffusion: 1.5,
+      longevityImpact: 0.8
+    }
+  };
+
+  // DOM elements
+  const tabs = document.querySelectorAll('.tab');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const scentIntensity = document.getElementById('scentIntensity');
+  const scentType = document.getElementById('scentType');
+  const roomSizeOptions = document.querySelectorAll('.room-size-option');
+  const airflowOptions = document.querySelectorAll('.airflow-option');
+  const scentTypeCards = document.querySelectorAll('.scent-type-card');
+  const calculateWholesaleBtn = document.getElementById('calculateWholesale');
+  const calculateSubscriptionBtn = document.getElementById('calculateSubscription');
+  const calculateBulkBtn = document.getElementById('calculateBulk');
+  const compareCarriersBtn = document.getElementById('compareCarriers');
+  const compareRatiosBtn = document.getElementById('compareRatios');
+  const resetChartBtn = document.getElementById('resetChart');
+
+  // Chart variables
+  let longevityChart, strengthChart, costChart;
+
+  // Initialize the calculator
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set up tab switching
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+        
+        // Initialize charts when their tabs are opened
+        if (tab.dataset.tab === 'visualization' && !longevityChart) {
+          initCharts();
+        }
+      });
+    });
+
+    // Scent intensity slider
+    scentIntensity.addEventListener('input', function() {
+      const value = this.value;
+      const marker = document.querySelector('.intensity-marker');
+      marker.style.left = `${(value - 1) * (100 / 9)}%`;
+      updateScentRecommendation();
+    });
+
+    // Scent type change
+    scentType.addEventListener('change', updateScentRecommendation);
+
+    // Room size selection
+    roomSizeOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        roomSizeOptions.forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        updateEnvironmentImpact();
+      });
+    });
+
+    // Airflow selection
+    airflowOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        airflowOptions.forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        updateEnvironmentImpact();
+      });
+    });
+
+    // Scent type cards
+    scentTypeCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const type = this.dataset.type;
+        scentTypeCards.forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        document.getElementById('scentType').value = type;
+        updateScentRecommendation();
+      });
+    });
+
+    // Room temperature and humidity inputs
+    document.getElementById('roomTemperature').addEventListener('input', updateEnvironmentImpact);
+    document.getElementById('roomHumidity').addEventListener('input', updateEnvironmentImpact);
+
+    // Wholesale calculator
+    calculateWholesaleBtn.addEventListener('click', calculateWholesalePricing);
+
+    // Subscription calculator
+    calculateSubscriptionBtn.addEventListener('click', calculateSubscription);
+
+    // Bulk discount calculator
+    calculateBulkBtn.addEventListener('click', calculateBulkDiscount);
+
+    // Chart controls
+    compareCarriersBtn.addEventListener('click', compareCarrierOils);
+    compareRatiosBtn.addEventListener('click', compareFragranceRatios);
+    resetChartBtn.addEventListener('click', resetCharts);
+
+    // Initialize scent recommendation
+    updateScentRecommendation();
+    updateEnvironmentImpact();
+  });
+
+  // Update scent recommendation based on selected options
+  function updateScentRecommendation() {
+    const type = scentType.value;
+    const intensity = scentIntensity.value;
+    const profile = scentProfiles[type];
+    
+    // Calculate adjusted ratio based on intensity (5 is baseline)
+    const ratioAdjustment = (intensity - 5) * 2; // +/- 2% per intensity point
+    const recommendedRatio = Math.min(90, Math.max(50, profile.recommendedRatio + ratioAdjustment));
+    
+    // Find best carrier oil
+    let bestCarrier = profile.recommendedCarriers[0];
+    let bestScore = 0;
+    
+    profile.recommendedCarriers.forEach(carrier => {
+      const carrierData = carrierProperties[carrier];
+      // Score based on evaporation rate and scent throw
+      let score = 0;
+      
+      if (intensity < 5) {
+        // Prefer slower evaporation for lighter scents
+        score = (1 - carrierData.baseEvaporation * 10) * 50;
+      } else {
+        // Prefer stronger scent throw for intense scents
+        score = carrierData.scentThrow.includes("Strong") ? 70 : 
+                carrierData.scentThrow.includes("Medium") ? 50 : 30;
+      }
+      
+      if (score > bestScore) {
+        bestScore = score;
+        bestCarrier = carrier;
+      }
+    });
+    
+    // Calculate estimated longevity
+    const baseLongevity = profile.longevity;
+    const carrierEvaporation = carrierProperties[bestCarrier].baseEvaporation;
+    const adjustedLongevity = baseLongevity * (1 / carrierEvaporation) * 0.035 * profile.evaporationBoost;
+    
+    // Update UI
+    document.getElementById('recommendedRatio').textContent = `${recommendedRatio}%`;
+    document.getElementById('recommendedCarrier').textContent = carrierProperties[bestCarrier].name;
+    document.getElementById('recommendedAbsorption').textContent = intensity < 5 ? '70%' : intensity > 7 ? '90%' : '80%';
+    document.getElementById('estimatedLongevityScent').textContent = `${Math.round(adjustedLongevity)} days`;
+    document.getElementById('scentThrow').textContent = carrierProperties[bestCarrier].scentThrow;
+    document.getElementById('evaporationRateScent').textContent = carrierProperties[bestCarrier].evaporationRate;
+    document.getElementById('scentRecommendation').textContent = profile.notes;
+    
+    // Update main calculator if on that tab
+    if (document.querySelector('.tab.active').dataset.tab === 'calculator') {
+      document.getElementById('fragranceRatio').value = recommendedRatio;
+      document.getElementById('carrierOil').value = bestCarrier;
+      document.getElementById('absorptionAdjustment').value = intensity < 5 ? 0.7 : intensity > 7 ? 0.9 : 0.8;
+    }
+  }
+
+  // Update environment impact analysis
+  function updateEnvironmentImpact() {
+    const roomSize = document.querySelector('.room-size-option.selected').dataset.size;
+    const airflow = document.querySelector('.airflow-option.selected').dataset.airflow;
+    const temp = parseFloat(document.getElementById('roomTemperature').value) || 72;
+    const humidity = parseFloat(document.getElementById('roomHumidity').value) || 50;
+    
+    const room = roomFactors[roomSize];
+    const air = airflowFactors[airflow];
+    
+    // Calculate diffusion
+    const tempEffect = 1 + ((temp - 72) * 0.01);
+    const humidityEffect = 1 - ((humidity - 50) * 0.005);
+    const diffusion = room.diffusion * air.diffusion * tempEffect * humidityEffect;
+    
+    // Calculate longevity impact
+    const longevityImpact = room.longevityImpact * air.longevityImpact * (1 / tempEffect) * humidityEffect;
+    
+    // Update UI
+    let diffusionText;
+    if (diffusion < 0.8) diffusionText = "Limited spread";
+    else if (diffusion < 1.1) diffusionText = "Moderate spread";
+    else diffusionText = "Wide spread";
+    
+    let longevityText;
+    if (longevityImpact < 0.9) longevityText = "Reduced by ~" + Math.round((1 - longevityImpact) * 100) + "%";
+    else if (longevityImpact > 1.1) longevityText = "Increased by ~" + Math.round((longevityImpact - 1) * 100) + "%";
+    else longevityText = "No significant impact";
+    
+    document.getElementById('scentDiffusion').textContent = diffusionText;
+    document.getElementById('longevityAdjustment').textContent = longevityText;
+    document.getElementById('recommendedFresheners').textContent = room.coverage + "-" + (room.coverage + 1) + " for complete coverage";
+  }
+
+  // Initialize charts
+  function initCharts() {
+    // Longevity Chart
+    const longevityCtx = document.getElementById('longevityChart').getContext('2d');
+    longevityChart = new Chart(longevityCtx, {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 30}, (_, i) => `Day ${i + 1}`),
+        datasets: [{
+          label: 'Scent Strength',
+          data: Array.from({length: 30}, (_, i) => 100 - (i * 3.5)),
+          borderColor: '#3498db',
+          backgroundColor: 'rgba(52, 152, 219, 0.1)',
+          borderWidth: 2,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Scent Longevity Projection'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: ${context.raw.toFixed(1)}% remaining`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: {
+              display: true,
+              text: 'Scent Strength (%)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Days'
+            }
+          }
+        }
+      }
+    });
+
+    // Strength Chart
+    const strengthCtx = document.getElementById('strengthChart').getContext('2d');
+    strengthChart = new Chart(strengthCtx, {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 30}, (_, i) => `Day ${i + 1}`),
+        datasets: [{
+          label: 'Standard Conditions',
+          data: Array.from({length: 30}, (_, i) => 100 - (i * 3.5)),
+          borderColor: '#3498db',
+          backgroundColor: 'rgba(52, 152, 219, 0.1)',
+          borderWidth: 2,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Scent Strength Over Time'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: ${context.raw.toFixed(1)}% strength`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: {
+              display: true,
+              text: 'Scent Strength (%)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Days'
+            }
+          }
+        }
+      }
+    });
+
+    // Cost Chart
+    const costCtx = document.getElementById('costChart').getContext('2d');
+    costChart = new Chart(costCtx, {
+      type: 'bar',
+      data: {
+        labels: ['IPM', 'DPG', 'FCO', 'ExtraLongevity'],
+        datasets: [{
+          label: 'Cost per Day',
+          data: [0.12, 0.10, 0.15, 0.11],
+          backgroundColor: [
+            'rgba(52, 152, 219, 0.7)',
+            'rgba(46, 204, 113, 0.7)',
+            'rgba(155, 89, 182, 0.7)',
+            'rgba(241, 196, 15, 0.7)'
+          ],
+          borderColor: [
+            'rgba(52, 152, 219, 1)',
+            'rgba(46, 204, 113, 1)',
+            'rgba(155, 89, 182, 1)',
+            'rgba(241, 196, 15, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Cost vs. Longevity Analysis'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `$${context.raw.toFixed(2)} per day`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Cost per Day ($)'
+            }
+          }
+        }
+      }
+    });
+
+    // Set up chart controls
+    document.getElementById('strengthTemperature').addEventListener('input', function() {
+      document.getElementById('strengthTempValue').textContent = `${this.value}°F`;
+      updateStrengthChart();
+    });
+
+    document.getElementById('strengthHumidity').addEventListener('input', function() {
+      document.getElementById('strengthHumidityValue').textContent = `${this.value}%`;
+      updateStrengthChart();
+    });
+  }
+
+  // Update strength chart based on environment
+  function updateStrengthChart() {
+    const temp = parseFloat(document.getElementById('strengthTemperature').value) || 72;
+    const humidity = parseFloat(document.getElementById('strengthHumidity').value) || 50;
+    
+    const tempEffect = 1 + ((temp - 72) * 0.02);
+    const humidityEffect = 1 - ((humidity - 50) * 0.01);
+    
+    const baseData = Array.from({length: 30}, (_, i) => 100 - (i * 3.5));
+    const adjustedData = baseData.map((val, i) => {
+      const dayEffect = 1 - (i * 0.01);
+      return val * (1 / tempEffect) * humidityEffect * dayEffect;
+    });
+    
+    strengthChart.data.datasets[0].data = adjustedData;
+    strengthChart.update();
+  }
+
+  // Compare carrier oils on longevity chart
+  function compareCarrierOils() {
+    const carriers = ['IPM', 'DPG', 'FCO', 'ExtraLongevity'];
+    const colors = ['#3498db', '#2ecc71', '#9b59b6', '#f1c40f'];
+    
+    longevityChart.data.datasets = carriers.map((carrier, i) => {
+      const rate = carrierProperties[carrier].baseEvaporation * 100;
+      return {
+        label: carrierProperties[carrier].name,
+        data: Array.from({length: 30}, (_, j) => 100 - (j * rate)),
+        borderColor: colors[i],
+        backgroundColor: `${colors[i]}20`,
+        borderWidth: 2,
+        fill: false
+      };
+    });
+    
+    longevityChart.options.plugins.title.text = 'Carrier Oil Comparison';
+    longevityChart.update();
+  }
+
+  // Compare fragrance ratios on longevity chart
+  function compareFragranceRatios() {
+    const ratios = [50, 60, 70, 80];
+    const colors = ['#e74c3c', '#f39c12', '#3498db', '#2ecc71'];
+    
+    longevityChart.data.datasets = ratios.map((ratio, i) => {
+      // Higher ratios evaporate faster (1% more per 10% ratio increase)
+      const rate = 3.5 * (1 + (ratio - 70) * 0.01);
+      return {
+        label: `${ratio}% Fragrance Ratio`,
+        data: Array.from({length: 30}, (_, j) => 100 - (j * rate)),
+        borderColor: colors[i],
+        backgroundColor: `${colors[i]}20`,
+        borderWidth: 2,
+        fill: false
+      };
+    });
+    
+    longevityChart.options.plugins.title.text = 'Fragrance Ratio Comparison';
+    longevityChart.update();
+  }
+
+  // Reset charts to default view
+  function resetCharts() {
+    longevityChart.data.datasets = [{
+      label: 'Scent Strength',
+      data: Array.from({length: 30}, (_, i) => 100 - (i * 3.5)),
+      borderColor: '#3498db',
+      backgroundColor: 'rgba(52, 152, 219, 0.1)',
+      borderWidth: 2,
+      fill: true
+    }];
+    longevityChart.options.plugins.title.text = 'Scent Longevity Projection';
+    longevityChart.update();
+    
+    updateStrengthChart();
+  }
+
+  // Wholesale pricing calculator
+  function calculateWholesalePricing() {
+    const quantity = parseInt(document.getElementById('wholesaleQuantity').value) || 100;
+    const basePrice = parseFloat(document.getElementById('wholesaleBasePrice').value) || 3.99;
+    const tier1 = parseInt(document.getElementById('wholesaleTier1').value) || 50;
+    const tier2 = parseInt(document.getElementById('wholesaleTier2').value) || 100;
+    const tier3 = parseInt(document.getElementById('wholesaleTier3').value) || 250;
+    
+    // Calculate prices
+    const tier1Price = basePrice * 0.95;
+    const tier2Price = basePrice * 0.90;
+    const tier3Price = basePrice * 0.85;
+    
+    // Update UI
+    document.getElementById('retailPrice').textContent = `$${basePrice.toFixed(2)}`;
+    document.getElementById('tier1Price').textContent = `$${tier1Price.toFixed(2)}`;
+    document.getElementById('tier1Min').textContent = tier1;
+    document.getElementById('tier1Total').textContent = `$${(tier1 * tier1Price).toFixed(2)}`;
+    document.getElementById('tier2Price').textContent = `$${tier2Price.toFixed(2)}`;
+    document.getElementById('tier2Min').textContent = tier2;
+    document.getElementById('tier2Total').textContent = `$${(tier2 * tier2Price).toFixed(2)}`;
+    document.getElementById('tier3Price').textContent = `$${tier3Price.toFixed(2)}`;
+    document.getElementById('tier3Min').textContent = tier3;
+    document.getElementById('tier3Total').textContent = `$${(tier3 * tier3Price).toFixed(2)}`;
+    
+    // Show results
+    document.getElementById('wholesaleResults').classList.remove('hidden');
+  }
+
+  // Subscription calculator
+  function calculateSubscription() {
+    const monthlyPrice = parseFloat(document.getElementById('subMonthlyPrice').value) || 9.99;
+    const fresheners = parseInt(document.getElementById('subFreshenersPerMonth').value) || 3;
+    const cost = parseFloat(document.getElementById('subCostPerFreshener').value) || 1.50;
+    const retention = parseInt(document.getElementById('subRetentionMonths').value) || 6;
+    
+    // Calculations
+    const monthlyCost = fresheners * cost;
+    const monthlyProfit = monthlyPrice - monthlyCost;
+    const ltv = monthlyProfit * retention;
+    
+    // Update UI
+    document.getElementById('subMonthlyRevenue').textContent = `$${monthlyPrice.toFixed(2)}`;
+    document.getElementById('subMonthlyCost').textContent = `$${monthlyCost.toFixed(2)}`;
+    document.getElementById('subMonthlyProfit').textContent = `$${monthlyProfit.toFixed(2)}`;
+    document.getElementById('subLTV').textContent = `$${ltv.toFixed(2)}`;
+    document.getElementById('subBreakEven').textContent = `$${ltv.toFixed(2)}`;
+    
+    // Show results
+    document.getElementById('subscriptionResults').classList.remove('hidden');
+  }
+
+  // Bulk discount calculator
+  function calculateBulkDiscount() {
+    const baseCost = parseFloat(document.getElementById('bulkBaseCost').value) || 1.50;
+    const retailPrice = parseFloat(document.getElementById('bulkRetailPrice').value) || 3.99;
+    const discount = parseFloat(document.getElementById('bulkDiscount').value) || 20;
+    const minOrder = parseInt(document.getElementById('bulkMinOrder').value) || 50;
+    
+    // Calculations
+    const discountPrice = retailPrice * (1 - discount / 100);
+    const standardProfit = retailPrice - baseCost;
+    const bulkProfit = discountPrice - baseCost;
+    const profitDifference = (bulkProfit * minOrder) - (standardProfit * minOrder);
+    const unitsToMatch = Math.ceil((standardProfit * minOrder) / bulkProfit);
+    
+    // Recommendations
+    let recommendation;
+    if (profitDifference > 0) {
+      recommendation = "This discount structure increases your profit! Consider offering it.";
+    } else if (unitsToMatch <= minOrder * 1.5) {
+      recommendation = "Increase minimum order quantity to " + Math.ceil(unitsToMatch) + " to maintain profits.";
+    } else {
+      recommendation = "Consider a smaller discount percentage to maintain profitability.";
+    }
+    
+    // Update UI
+    document.getElementById('standardProfit').textContent = `$${standardProfit.toFixed(2)}`;
+    document.getElementById('standardTotalProfit').textContent = `$${(standardProfit * minOrder).toFixed(2)}`;
+    document.getElementById('bulkPrice').textContent = `$${discountPrice.toFixed(2)}`;
+    document.getElementById('bulkProfit').textContent = `$${bulkProfit.toFixed(2)}`;
+    document.getElementById('bulkTotalProfit').textContent = `$${(bulkProfit * minOrder).toFixed(2)}`;
+    document.getElementById('profitDifference').textContent = `$${profitDifference.toFixed(2)}`;
+    document.getElementById('unitsToMatch').textContent = unitsToMatch;
+    document.getElementById('bulkRecommendation').textContent = recommendation;
+    
+    // Show results
+    document.getElementById('bulkResults').classList.remove('hidden');
+  }
+
+  // [Previous calculator functions remain unchanged]
+  // ...
+ 
+
+  // DOM elements
+  const environmentPreset = document.getElementById("environmentPreset");
+  const temperatureInput = document.getElementById("temperature");
+  const humidityInput = document.getElementById("humidity");
+  const thicknessSelect = document.getElementById("thickness");
+  const customThicknessGroup = document.getElementById("customThicknessGroup");
+  const carrierOilSelect = document.getElementById("carrierOil");
+  const carrierPropertiesDiv = document.getElementById("carrierProperties");
+  const calculateBtn = document.getElementById("calculate");
+  const resetBtn = document.getElementById("reset");
+  const saveAsPDFBtn = document.getElementById("saveAsPDF");
+  const saveAsExcelBtn = document.getElementById("saveAsExcel");
+  const saveOrderBtn = document.getElementById("saveOrder");
+  const resultsDiv = document.getElementById("results");
+  const orderList = document.getElementById("orderList");
+  const runWhatIfBtn = document.getElementById("runWhatIf");
+  const addWhatIfOrderBtn = document.getElementById("addWhatIfOrder");
+  const calculateHiringBtn = document.getElementById("calculateHiring");
+  const calculateSmallBatchBtn = document.getElementById("calculateSmallBatch");
+  const ganttChart = document.getElementById("ganttChart");
+
+  // Order storage
+  let orders = JSON.parse(localStorage.getItem('airFreshenerOrders')) || [];
+  
+
+
+  // Event Listeners
+  document.addEventListener('DOMContentLoaded', function() {
+    // Environment preset change
+    environmentPreset.addEventListener("change", () => {
+      const presets = {
+        hotDry: { temp: 90, humidity: 20 },
+        hotHumid: { temp: 90, humidity: 70 },
+        mild: { temp: 72, humidity: 50 },
+        coolDry: { temp: 60, humidity: 30 },
+        coolHumid: { temp: 60, humidity: 70 }
+      };
+      const selected = presets[environmentPreset.value];
+      if (selected) {
+        temperatureInput.value = selected.temp;
+        humidityInput.value = selected.humidity;
+      } else {
+        temperatureInput.value = '';
+        humidityInput.value = '';
+      }
+    });
+
+    // Thickness select change
+    thicknessSelect.addEventListener("change", function() {
+      if (this.value === "custom") {
+        customThicknessGroup.classList.remove("hidden");
+      } else {
+        customThicknessGroup.classList.add("hidden");
+      }
+    });
+
+    // Carrier oil select change
+    carrierOilSelect.addEventListener("change", function() {
+      const selectedCarrier = carrierProperties[this.value];
+      if (selectedCarrier) {
+        document.getElementById("evaporationRate").textContent = selectedCarrier.evaporationRate;
+        document.getElementById("recommendedUse").textContent = selectedCarrier.name;
+        document.getElementById("carrierNotes").textContent = selectedCarrier.notes;
+        carrierPropertiesDiv.classList.remove("hidden");
+      } else {
+        carrierPropertiesDiv.classList.add("hidden");
+      }
+      
+      // Show/hide blend breakdowns
+      document.getElementById("extraLongevityBreakdown").classList.add("hidden");
+      document.getElementById("dpgFcoBreakdown").classList.add("hidden");
+      
+      if (this.value === "ExtraLongevity") {
+        document.getElementById("extraLongevityBreakdown").classList.remove("hidden");
+      } else if (this.value === "DPG_FCO") {
+        document.getElementById("dpgFcoBreakdown").classList.remove("hidden");
+      }
+    });
+
+    // Calculate button click
+    calculateBtn.addEventListener("click", calculate);
+
+    // Reset button click
+    resetBtn.addEventListener("click", function() {
+      // Reset all input fields
+      const inputs = document.querySelectorAll('input[type="number"], input[type="text"], select, textarea');
+      inputs.forEach(input => {
+        if (input.id === "fragranceRatio") {
+          input.value = "70";
+        } else if (input.id === "costPerOzFragrance") {
+          input.value = "1.67";
+        } else if (input.id === "costPerOzCarrier") {
+          input.value = "0.50";
+        } else if (input.id === "costPerCardstock") {
+          input.value = "0.25";
+        } else if (input.id === "quantity") {
+          input.value = "1";
+        } else if (input.id === "profitMargin") {
+          input.value = "50";
+        } else if (input.id === "prepTime") {
+          input.value = "5";
+        } else if (input.id === "curingTime") {
+          input.value = "24";
+        } else if (input.id === "dailyWorkHours") {
+          input.value = "8";
+        } else if (input.id === "packagingTime") {
+          input.value = "15";
+        } else if (input.id === "shippingDays") {
+          input.value = "1";
+        } else if (input.id === "hourlyRate") {
+          input.value = "15.00";
+        } else if (input.id === "rushSurcharge") {
+          input.value = "20";
+        } else if (input.id === "wholesaleDiscount") {
+          input.value = "15";
+        } else {
+          input.value = "";
+        }
+      });
+      
+      // Reset selects to default
+      document.getElementById("environmentPreset").selectedIndex = 0;
+      document.getElementById("thickness").selectedIndex = 0;
+      document.getElementById("absorptionAdjustment").selectedIndex = 1;
+      document.getElementById("carrierOil").selectedIndex = 0;
+      document.getElementById("batchCapacity").selectedIndex = 2;
+      document.getElementById("orderType").selectedIndex = 0;
+      
+      // Hide results
+      resultsDiv.classList.add("hidden");
+      carrierPropertiesDiv.classList.add("hidden");
+      customThicknessGroup.classList.add("hidden");
+      document.getElementById("extraLongevityBreakdown").classList.add("hidden");
+      document.getElementById("dpgFcoBreakdown").classList.add("hidden");
+    });
+
+    // Save as PDF button click
+    saveAsPDFBtn.addEventListener("click", saveAsPDF);
+
+    // Save as Excel button click
+    saveAsExcelBtn.addEventListener("click", saveAsExcel);
+    
+    // Save Order button click
+    saveOrderBtn.addEventListener("click", saveOrder);
+    
+    // What-if scenario button
+    runWhatIfBtn.addEventListener("click", runWhatIfScenario);
+    
+    // Add what-if order button
+    addWhatIfOrderBtn.addEventListener("click", addWhatIfOrder);
+    
+    // Hiring calculation button
+    calculateHiringBtn.addEventListener("click", calculateHiringImpact);
+    
+    // Small batch calculation button
+    calculateSmallBatchBtn.addEventListener("click", calculateSmallBatchPricing);
+    
+    // Load any saved orders
+    renderOrders();
+    updateLaborAnalysis();
+  });
+
+  // Format time display
+  function formatTime(totalHours) {
+    const days = Math.floor(totalHours / 24);
+    const hours = Math.floor(totalHours % 24);
+    const minutes = Math.round((totalHours % 1) * 60);
+    
+    let result = [];
+    if (days > 0) result.push(`${days} day${days > 1 ? 's' : ''}`);
+    if (hours > 0) result.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+    if (minutes > 0 && days === 0) result.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+    
+    return result.join(' ') || 'Less than 1 minute';
+  }
+
+  // Calculate longevity function
+  function calculateLongevity(oilPerFreshener, carrierOil, fragranceRatio, thickness, temp = 72, humidity = 50) {
+    const baseEvap = carrierProperties[carrierOil].baseEvaporation;
+    const fragranceEffect = 1 + (fragranceRatio * 0.5);
+    const tempEffect = 1 + ((temp - 72) * 0.01);
+    const humidityEffect = 1 - ((humidity - 50) * 0.005);
+    
+    // Thickness factor - thicker cardstock retains oil longer
+    const thicknessFactor = 1 + (thickness - 2) * 0.1; // 10% increase per mm over 2mm
+    
+    const environmentMultiplier = Math.max(0.8, Math.min(1.3, tempEffect * humidityEffect));
+    const dailyLoss = (oilPerFreshener * baseEvap * fragranceEffect * environmentMultiplier) / thicknessFactor;
+    const estimatedLongevity = Math.round(oilPerFreshener / dailyLoss);
+    
+    return {
+      longevity: Math.min(90, Math.max(5, estimatedLongevity)),
+      dailyLoss: dailyLoss.toFixed(4),
+      multiplier: environmentMultiplier.toFixed(2),
+      thicknessFactor: thicknessFactor.toFixed(2)
+    };
+  }
+
+  // Generate calendar view with client names and color coding
+  function generateCalendar(startDate, productionDays, curingDays, shippingDays, orderName, orderType) {
+    const calendarDays = document.getElementById("calendarDays");
+    const calendarDaysHeader = document.getElementById("calendarDaysHeader");
+    const calendarMonthYear = document.getElementById("calendarMonthYear");
+    
+    // Clear previous calendar
+    calendarDays.innerHTML = "";
+    calendarDaysHeader.innerHTML = "";
+    
+    // Set month/year header
+    const options = { month: 'long', year: 'numeric' };
+    calendarMonthYear.textContent = startDate.toLocaleDateString('en-US', options);
+    
+    // Create day headers
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    dayNames.forEach(day => {
+      const dayHeader = document.createElement("div");
+      dayHeader.className = "calendar-day-header";
+      dayHeader.textContent = day;
+      calendarDaysHeader.appendChild(dayHeader);
+    });
+    
+    // Get first day of month and total days in month
+    const firstDay = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+    const lastDay = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+    const totalDays = lastDay.getDate();
+    
+    // Add empty cells for days before the first of the month
+    for (let i = 0; i < firstDay.getDay(); i++) {
+      const emptyDay = document.createElement("div");
+      emptyDay.className = "calendar-day empty";
+      calendarDays.appendChild(emptyDay);
+    }
+    
+    // Calculate end dates
+    const productionEndDate = new Date(startDate);
+    productionEndDate.setDate(startDate.getDate() + productionDays);
+    
+    const curingEndDate = new Date(productionEndDate);
+    curingEndDate.setDate(productionEndDate.getDate() + curingDays);
+    
+    const shippingEndDate = new Date(curingEndDate);
+    shippingEndDate.setDate(curingEndDate.getDate() + shippingDays);
+    
+    // Create calendar days
+    for (let i = 1; i <= totalDays; i++) {
+      const dayDate = new Date(startDate.getFullYear(), startDate.getMonth(), i);
+      const dayElement = document.createElement("div");
+      dayElement.className = "calendar-day";
+      
+      const dayNumber = document.createElement("div");
+      dayNumber.className = "calendar-day-number";
+      dayNumber.textContent = i;
+      dayElement.appendChild(dayNumber);
+      
+      // Check if this day is during production
+      if (dayDate >= startDate && dayDate <= productionEndDate) {
+        const event = document.createElement("div");
+        event.className = `calendar-event production ${orderType}`;
+        event.textContent = orderName || "Production";
+        event.setAttribute('data-tooltip', `${orderName || "Production"} (${orderType})`);
+        dayElement.appendChild(event);
+      }
+      
+      // Check if this day is during curing
+      if (dayDate > productionEndDate && dayDate <= curingEndDate) {
+        const event = document.createElement("div");
+        event.className = `calendar-event curing ${orderType}`;
+        event.textContent = orderName ? `${orderName} Curing` : "Curing";
+        event.setAttribute('data-tooltip', `${orderName || "Curing"} (${orderType})`);
+        dayElement.appendChild(event);
+      }
+      
+      // Check if this day is during shipping
+      if (dayDate > curingEndDate && dayDate <= shippingEndDate) {
+        const event = document.createElement("div");
+        event.className = `calendar-event shipping ${orderType}`;
+        event.textContent = orderName ? `${orderName} Shipping` : "Shipping Prep";
+        event.setAttribute('data-tooltip', `${orderName || "Shipping"} (${orderType})`);
+        dayElement.appendChild(event);
+      }
+      
+      // Highlight today
+      const today = new Date();
+      if (dayDate.getDate() === today.getDate() && 
+          dayDate.getMonth() === today.getMonth() && 
+          dayDate.getFullYear() === today.getFullYear()) {
+        dayElement.style.border = "2px solid var(--accent-color)";
+      }
+      
+      calendarDays.appendChild(dayElement);
+    }
+  }
+
+  // Generate timeline items
+  function generateTimeline(startDate, productionDays, curingDays, shippingDays) {
+    const timelineItems = document.getElementById("timelineItems");
+    timelineItems.innerHTML = "";
+    
+    const productionEndDate = new Date(startDate);
+    productionEndDate.setDate(startDate.getDate() + productionDays);
+    
+    const curingEndDate = new Date(productionEndDate);
+    curingEndDate.setDate(productionEndDate.getDate() + curingDays);
+    
+    const shippingEndDate = new Date(curingEndDate);
+    shippingEndDate.setDate(curingEndDate.getDate() + shippingDays);
+    
+    // Production phase
+    const productionItem = document.createElement("div");
+    productionItem.className = "timeline-item";
+    productionItem.innerHTML = `
+      <div class="timeline-badge production"></div>
+      <div class="timeline-date">${startDate.toLocaleDateString()}</div>
+      <div class="timeline-content">Production begins</div>
+    `;
+    timelineItems.appendChild(productionItem);
+    
+    // Production end
+    const productionEndItem = document.createElement("div");
+    productionEndItem.className = "timeline-item";
+    productionEndItem.innerHTML = `
+      <div class="timeline-badge production"></div>
+      <div class="timeline-date">${productionEndDate.toLocaleDateString()}</div>
+      <div class="timeline-content">Production completes (${productionDays} day${productionDays !== 1 ? 's' : ''})</div>
+    `;
+    timelineItems.appendChild(productionEndItem);
+    
+    // Curing phase
+    const curingItem = document.createElement("div");
+    curingItem.className = "timeline-item";
+    curingItem.innerHTML = `
+      <div class="timeline-badge curing"></div>
+      <div class="timeline-date">${productionEndDate.toLocaleDateString()}</div>
+      <div class="timeline-content">Curing begins</div>
+    `;
+    timelineItems.appendChild(curingItem);
+    
+    // Curing end
+    const curingEndItem = document.createElement("div");
+    curingEndItem.className = "timeline-item";
+    curingEndItem.innerHTML = `
+      <div class="timeline-badge curing"></div>
+      <div class="timeline-date">${curingEndDate.toLocaleDateString()}</div>
+      <div class="timeline-content">Curing completes (${curingDays} day${curingDays !== 1 ? 's' : ''})</div>
+    `;
+    timelineItems.appendChild(curingEndItem);
+    
+    // Shipping phase
+    const shippingItem = document.createElement("div");
+    shippingItem.className = "timeline-item";
+    shippingItem.innerHTML = `
+      <div class="timeline-badge shipping"></div>
+      <div class="timeline-date">${curingEndDate.toLocaleDateString()}</div>
+      <div class="timeline-content">Shipping preparation begins</div>
+    `;
+    timelineItems.appendChild(shippingItem);
+    
+    // Shipping end
+    const shippingEndItem = document.createElement("div");
+    shippingEndItem.className = "timeline-item";
+    shippingEndItem.innerHTML = `
+      <div class="timeline-badge shipping"></div>
+      <div class="timeline-date">${shippingEndDate.toLocaleDateString()}</div>
+      <div class="timeline-content">Ready to ship (${shippingDays} day${shippingDays !== 1 ? 's' : ''} processing)</div>
+    `;
+    timelineItems.appendChild(shippingEndItem);
+  }
+
+  // Main calculation function
+  function calculate() {
+    // Validate Inputs
+    const requiredIds = ["length", "width", "dryWeight", "absorbedWeight", "fragranceRatio", 
+                        "costPerOzFragrance", "costPerOzCarrier", "costPerCardstock", "quantity", "freshenerArea", "profitMargin"];
+    for (const id of requiredIds) {
+      const el = document.getElementById(id);
+      if (!el.value || parseFloat(el.value) <= 0) {
+        alert(`Please enter a valid value for ${el.previousElementSibling.textContent.trim()}`);
+        el.focus();
+        return;
+      }
+    }
+
+    // Get thickness value
+    let thickness;
+    if (document.getElementById("thickness").value === "custom") {
+      thickness = parseFloat(document.getElementById("customThickness").value) || 2;
+    } else {
+      thickness = parseFloat(document.getElementById("thickness").value);
+    }
+
+    // Inputs
+    const length = parseFloat(document.getElementById("length").value);
+    const width = parseFloat(document.getElementById("width").value);
+    const dryWeight = parseFloat(document.getElementById("dryWeight").value);
+    const absorbedWeight = parseFloat(document.getElementById("absorbedWeight").value);
+    const fragranceRatio = parseFloat(document.getElementById("fragranceRatio").value) / 100;
+    const costFO = parseFloat(document.getElementById("costPerOzFragrance").value);
+    const costCO = parseFloat(document.getElementById("costPerOzCarrier").value);
+    const costPerCardstock = parseFloat(document.getElementById("costPerCardstock").value);
+    const cardstocks = parseInt(document.getElementById("quantity").value);
+    const freshenerArea = parseFloat(document.getElementById("freshenerArea").value);
+    const absorptionAdjustment = parseFloat(document.getElementById("absorptionAdjustment").value);
+    const desiredLongevity = parseFloat(document.getElementById("desiredLongevity").value) || null;
+    const carrierOil = document.getElementById("carrierOil").value;
+    const temp = parseFloat(document.getElementById("temperature").value) || 72;
+    const humidity = parseFloat(document.getElementById("humidity").value) || 50;
+    const sellingPrice = parseFloat(document.getElementById("sellingPrice").value) || null;
+    const profitMargin = parseFloat(document.getElementById("profitMargin").value) / 100;
+    const prepTime = parseFloat(document.getElementById("prepTime").value) || 5;
+    const curingTime = parseFloat(document.getElementById("curingTime").value) || 24;
+    const batchCapacity = parseInt(document.getElementById("batchCapacity").value) || 5;
+    const dailyWorkHours = parseFloat(document.getElementById("dailyWorkHours").value) || 8;
+    const packagingTime = parseFloat(document.getElementById("packagingTime").value) || 15;
+    const shippingDays = parseFloat(document.getElementById("shippingDays").value) || 1;
+    const hourlyRate = parseFloat(document.getElementById("hourlyRate").value) || 15.00;
+    const orderType = document.getElementById("orderType").value;
+    const orderName = document.getElementById("orderName").value || "Current Order";
+
+    // Calculations
+    const cardstockArea = length * width;
+    const freshenersPerCardstock = Math.floor(cardstockArea / freshenerArea);
+    const totalFresheners = freshenersPerCardstock * cardstocks;
+    
+    // Modify oil absorption based on thickness
+    const baseOilAbsorbed = (absorbedWeight - dryWeight) * absorptionAdjustment * cardstocks;
+    const thicknessAbsorptionFactor = 1 + (thickness - 2) * 0.15;
+    const oilAbsorbed = baseOilAbsorbed * thicknessAbsorptionFactor;
+    
+    const FO = oilAbsorbed * fragranceRatio;
+    const CO = oilAbsorbed - FO;
+    const oilPerFreshener = oilAbsorbed / totalFresheners;
+    
+    // Longevity calculation
+    const result = calculateLongevity(oilPerFreshener, carrierOil, fragranceRatio, thickness, temp, humidity);
+
+    // Cost calculations (including cardstock)
+    const fragranceCost = FO * costFO;
+    const carrierCost = CO * costCO;
+    const cardstockCost = cardstocks * costPerCardstock;
+    const totalCost = fragranceCost + carrierCost + cardstockCost;
+    const costPerFreshener = totalCost / totalFresheners;
+
+    // Pricing and profit calculations
+    let calculatedSellingPrice, profitPerFreshener, totalProfit, totalRevenue;
+    
+    // Apply order type adjustments
+    let priceMultiplier = 1;
+    if (orderType === "rush") {
+      const rushSurcharge = parseFloat(document.getElementById("rushSurcharge").value) || 20;
+      priceMultiplier = 1 + (rushSurcharge / 100);
+    } else if (orderType === "wholesale") {
+      const wholesaleDiscount = parseFloat(document.getElementById("wholesaleDiscount").value) || 15;
+      priceMultiplier = 1 - (wholesaleDiscount / 100);
+    }
+    
+    if (sellingPrice) {
+      // Calculate profit based on selling price
+      calculatedSellingPrice = sellingPrice * priceMultiplier;
+      profitPerFreshener = calculatedSellingPrice - costPerFreshener;
+      totalProfit = profitPerFreshener * totalFresheners;
+      totalRevenue = calculatedSellingPrice * totalFresheners;
+    } else {
+      // Calculate selling price based on profit margin
+      calculatedSellingPrice = (costPerFreshener / (1 - profitMargin)) * priceMultiplier;
+      profitPerFreshener = calculatedSellingPrice - costPerFreshener;
+      totalProfit = profitPerFreshener * totalFresheners;
+      totalRevenue = calculatedSellingPrice * totalFresheners;
+    }
+    
+    const actualProfitMargin = (profitPerFreshener / calculatedSellingPrice) * 100;
+
+    // Absorption calculations
+    const baseAbsorptionRate = (absorbedWeight - dryWeight) / cardstockArea;
+    const adjustedAbsorptionRate = baseAbsorptionRate * thicknessAbsorptionFactor;
+
+    // Longevity Matching
+    let longevityMatch = "", recommendation = "";
+    if (desiredLongevity) {
+      const ratio = result.longevity / desiredLongevity;
+      if (ratio > 1.2) {
+        longevityMatch = "Longer than desired";
+        recommendation = "Use faster-evaporating carrier or increase FO %";
+      } else if (ratio < 0.8) {
+        longevityMatch = "Shorter than desired";
+        recommendation = "Use slower-evaporating carrier or reduce FO %";
+      } else {
+        longevityMatch = "Close to target";
+        recommendation = "No changes needed";
+      }
+    } else {
+      longevityMatch = "Estimated";
+      recommendation = carrierProperties[carrierOil].notes;
+    }
+
+    // Production Time Calculation
+    const batches = Math.ceil(cardstocks / batchCapacity);
+    const totalPrepTime = batches * prepTime; // Total minutes for all batches
+    const prepHours = totalPrepTime / 60; // Convert to hours
+    const productionDays = Math.ceil(prepHours / dailyWorkHours); // Days needed for production
+    
+    const curingDays = Math.ceil(curingTime / 24); // Convert curing hours to days
+    
+    const packagingHours = packagingTime / 60; // Convert packaging minutes to hours
+    
+    // Total production time (production days + curing days)
+    const totalProductionDays = productionDays + curingDays;
+    const totalTimeHours = (prepHours + curingTime + packagingHours);
+    
+    // Calculate completion time
+    const now = new Date();
+    const productionEndDate = new Date(now);
+    productionEndDate.setDate(now.getDate() + productionDays);
+    
+    const curingEndDate = new Date(productionEndDate);
+    curingEndDate.setDate(productionEndDate.getDate() + curingDays);
+    
+    const shippingDate = new Date(curingEndDate);
+    shippingDate.setDate(curingEndDate.getDate() + shippingDays);
+    
+    const completionString = curingEndDate.toLocaleString();
+    const shippingString = shippingDate.toLocaleString();
+    
+    // Labor cost calculations
+    const prepTimeCost = (prepHours * hourlyRate).toFixed(2);
+    const packagingCost = (packagingHours * hourlyRate).toFixed(2);
+    const totalLaborCost = (parseFloat(prepTimeCost) + parseFloat(packagingCost)).toFixed(2);
+    const laborCostPerFreshener = (totalLaborCost / totalFresheners).toFixed(4);
+    
+    const totalCostWithLabor = (parseFloat(totalCost) + parseFloat(totalLaborCost)).toFixed(2);
+    const costPerFreshenerWithLabor = (parseFloat(costPerFreshener) + parseFloat(laborCostPerFreshener)).toFixed(4);
+    const profitAfterLabor = (parseFloat(profitPerFreshener) - parseFloat(laborCostPerFreshener)).toFixed(2);
+    const totalProfitAfterLabor = (parseFloat(totalProfit) - parseFloat(totalLaborCost)).toFixed(2);
+
+    // Output all results
+    document.getElementById("cardstockArea").textContent = cardstockArea.toFixed(2);
+    document.getElementById("absorptionRate").textContent = adjustedAbsorptionRate.toFixed(4);
+    document.getElementById("adjustedAbsorption").textContent = `${(absorptionAdjustment * thicknessAbsorptionFactor * 100).toFixed(0)}% (${thickness}mm × ${absorptionAdjustment * 100}%)`;
+    document.getElementById("freshenersPerCardstock").textContent = freshenersPerCardstock;
+    document.getElementById("totalFresheners").textContent = totalFresheners;
+    
+    document.getElementById("totalOil").textContent = oilAbsorbed.toFixed(3);
+    document.getElementById("fragranceOil").textContent = FO.toFixed(3);
+    document.getElementById("carrierOilAmount").textContent = CO.toFixed(3);
+    document.getElementById("oilPerFreshener").textContent = oilPerFreshener.toFixed(4);
+    
+    document.getElementById("fragranceCost").textContent = `$${fragranceCost.toFixed(2)}`;
+    document.getElementById("carrierCost").textContent = `$${carrierCost.toFixed(2)}`;
+    document.getElementById("cardstockCost").textContent = `$${cardstockCost.toFixed(2)}`;
+    document.getElementById("totalCost").textContent = `$${totalCost.toFixed(2)}`;
+    document.getElementById("costPerFreshener").textContent = `$${costPerFreshener.toFixed(4)}`;
+    
+    document.getElementById("estimatedLongevity").textContent = result.longevity;
+    document.getElementById("dailyOilLoss").textContent = `${result.dailyLoss} (×${result.multiplier} env × ${result.thicknessFactor} thickness)`;
+    document.getElementById("longevityMatch").textContent = longevityMatch;
+    document.getElementById("recommendedAdjustment").textContent = recommendation;
+
+    // Pricing and profit results
+    document.getElementById("costPerFreshenerProfit").textContent = `$${costPerFreshener.toFixed(4)}`;
+    document.getElementById("sellingPriceResult").textContent = `$${calculatedSellingPrice.toFixed(2)}`;
+    document.getElementById("profitPerFreshener").textContent = `$${profitPerFreshener.toFixed(2)}`;
+    document.getElementById("profitMarginResult").textContent = `${actualProfitMargin.toFixed(1)}%`;
+    document.getElementById("totalRevenue").textContent = `$${totalRevenue.toFixed(2)}`;
+    document.getElementById("totalProfit").textContent = `$${totalProfit.toFixed(2)}`;
+
+    // Production time results
+    document.getElementById("batchDetails").textContent = `${batches} batch${batches > 1 ? 'es' : ''} of ${Math.min(cardstocks, batchCapacity)} cardstock${Math.min(cardstocks, batchCapacity) > 1 ? 's' : ''} each`;
+    document.getElementById("totalPrepTime").textContent = `${totalPrepTime} minutes (${formatTime(prepHours)})`;
+    document.getElementById("totalCuringTime").textContent = `${curingTime} hours (${curingDays} day${curingDays !== 1 ? 's' : ''})`;
+    document.getElementById("packagingTimeResult").textContent = `${packagingTime} minutes`;
+    document.getElementById("totalProductionTime").textContent = `${formatTime(totalTimeHours)} (${totalProductionDays} day${totalProductionDays !== 1 ? 's' : ''})`;
+    document.getElementById("estimatedCompletion").textContent = completionString;
+    document.getElementById("estimatedShipDate").textContent = shippingString;
+    
+    // Labor cost results
+    document.getElementById("prepTimeCost").textContent = `$${prepTimeCost}`;
+    document.getElementById("packagingCost").textContent = `$${packagingCost}`;
+    document.getElementById("totalLaborCost").textContent = `$${totalLaborCost}`;
+    document.getElementById("laborCostPerFreshener").textContent = `$${laborCostPerFreshener}`;
+    document.getElementById("totalCostWithLabor").textContent = `$${totalCostWithLabor}`;
+    document.getElementById("costPerFreshenerWithLabor").textContent = `$${costPerFreshenerWithLabor}`;
+    document.getElementById("profitAfterLabor").textContent = `$${profitAfterLabor}`;
+    document.getElementById("totalProfitAfterLabor").textContent = `$${totalProfitAfterLabor}`;
+
+    // Generate timeline and calendar
+    generateTimeline(now, productionDays, curingDays, shippingDays);
+    generateCalendar(now, productionDays, curingDays, shippingDays, orderName, orderType);
+
+    // Extra longevity blend breakdown
+    if (carrierOil === "ExtraLongevity") {
+      const ipmAmount = CO * 0.5;
+      const dpgAmount = CO * 0.5;
+      document.getElementById("ipmAmount").textContent = ipmAmount.toFixed(3);
+      document.getElementById("dpgAmount").textContent = dpgAmount.toFixed(3);
+      document.getElementById("ipmCost").textContent = `$${(ipmAmount * costCO).toFixed(2)}`;
+      document.getElementById("dpgCost").textContent = `$${(dpgAmount * costCO).toFixed(2)}`;
+    }
+    
+    // DPG + FCO blend breakdown
+    if (carrierOil === "DPG_FCO") {
+      const dpgAmount = CO * 0.7;
+      const fcoAmount = CO * 0.3;
+      document.getElementById("dpgFco_dpgAmount").textContent = dpgAmount.toFixed(3);
+      document.getElementById("dpgFco_fcoAmount").textContent = fcoAmount.toFixed(3);
+      document.getElementById("dpgFco_dpgCost").textContent = `$${(dpgAmount * costCO).toFixed(2)}`;
+      document.getElementById("dpgFco_fcoCost").textContent = `$${(fcoAmount * costCO).toFixed(2)}`;
+    }
+
+    // Show results
+    resultsDiv.classList.remove("hidden");
+  }
+
+  // Save order to storage
+  function saveOrder() {
+    if (resultsDiv.classList.contains("hidden")) {
+      alert("Please calculate the order first before saving");
+      return;
+    }
+    
+    const orderName = document.getElementById("orderName").value || `Order ${orders.length + 1}`;
+    const orderType = document.getElementById("orderType").value;
+    const dueDate = document.getElementById("orderDueDate").value;
+    const quantity = parseInt(document.getElementById("quantity").value);
+    const totalFresheners = parseInt(document.getElementById("totalFresheners").textContent);
+    const totalPrepTime = document.getElementById("totalPrepTime").textContent;
+    const totalProductionTime = document.getElementById("totalProductionTime").textContent;
+    const estimatedCompletion = document.getElementById("estimatedCompletion").textContent;
+    const estimatedShipDate = document.getElementById("estimatedShipDate").textContent;
+    const totalCost = document.getElementById("totalCost").textContent;
+    const totalRevenue = document.getElementById("totalRevenue").textContent;
+    const totalProfit = document.getElementById("totalProfit").textContent;
+    const totalLaborCost = document.getElementById("totalLaborCost").textContent;
+    
+    const order = {
+      id: Date.now(),
+      name: orderName,
+      type: orderType,
+      dueDate: dueDate,
+      quantity: quantity,
+      totalFresheners: totalFresheners,
+      prepTime: totalPrepTime,
+      productionTime: totalProductionTime,
+      completionDate: estimatedCompletion,
+      shipDate: estimatedShipDate,
+      cost: totalCost,
+      revenue: totalRevenue,
+      profit: totalProfit,
+      laborCost: totalLaborCost,
+      timestamp: new Date().toISOString()
+    };
+    
+    orders.push(order);
+    localStorage.setItem('airFreshenerOrders', JSON.stringify(orders));
+    renderOrders();
+    updateLaborAnalysis();
+    renderGanttChart();
+    
+    alert(`Order "${orderName}" saved successfully!`);
+  }
+  
+  // Render saved orders with drag and drop functionality
+  function renderOrders() {
+    orderList.innerHTML = "";
+    
+    if (orders.length === 0) {
+      orderList.innerHTML = "<p>No orders saved yet. Calculate and save an order to see it here.</p>";
+      return;
+    }
+    
+    // Sort orders by completion date (soonest first)
+    orders.sort((a, b) => {
+      if (a.completionDate && b.completionDate) {
+        return new Date(a.completionDate) - new Date(b.completionDate);
+      }
+      return 0;
+    });
+    
+    orders.forEach((order, index) => {
+      const orderItem = document.createElement("div");
+      orderItem.className = `order-item ${order.type}`;
+      orderItem.setAttribute('draggable', 'true');
+      orderItem.setAttribute('data-id', order.id);
+      orderItem.setAttribute('data-index', index);
+      
+      let badge = "";
+      if (order.type === "rush") {
+        badge = '<span class="rush-badge">RUSH</span>';
+      } else if (order.type === "wholesale") {
+        badge = '<span class="wholesale-badge">WHOLESALE</span>';
+      } else if (order.type === "special") {
+        badge = '<span class="special-badge">SPECIAL</span>';
+      }
+      
+      orderItem.innerHTML = `
+        <div class="order-header">
+          <div class="order-title">${order.name} ${badge}</div>
+          <div class="order-meta">${order.completionDate}</div>
+        </div>
+        <div class="order-details">
+          <div>
+            <p><strong>Quantity:</strong> ${order.quantity} cardstocks (${order.totalFresheners} fresheners)</p>
+            <p><strong>Prep Time:</strong> ${order.prepTime}</p>
+          </div>
+          <div>
+            <p><strong>Total Time:</strong> ${order.productionTime}</p>
+            <p><strong>Ship Date:</strong> ${order.shipDate}</p>
+          </div>
+          <div>
+            <p><strong>Revenue:</strong> ${order.revenue}</p>
+            <p><strong>Profit:</strong> ${order.profit} (Labor: ${order.laborCost})</p>
+          </div>
+        </div>
+        <div class="order-actions">
+          <button class="secondary" data-id="${order.id}">View Details</button>
+          <button class="danger" data-id="${order.id}">Delete</button>
+        </div>
+      `;
+      
+      orderList.appendChild(orderItem);
+    });
+    
+    // Add event listeners to buttons
+    document.querySelectorAll('.order-actions button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const id = parseInt(button.dataset.id);
+        const order = orders.find(o => o.id === id);
+        
+        if (button.textContent === "Delete") {
+          if (confirm(`Are you sure you want to delete order "${order.name}"?`)) {
+            orders = orders.filter(o => o.id !== id);
+            localStorage.setItem('airFreshenerOrders', JSON.stringify(orders));
+            renderOrders();
+            updateLaborAnalysis();
+            renderGanttChart();
+          }
+        } else {
+          // For view details - could expand this to show more details
+          alert(`Order Details:\nName: ${order.name}\nType: ${order.type}\nQuantity: ${order.quantity}\nCompletion: ${order.completionDate}\nProfit: ${order.profit}`);
+        }
+      });
+    });
+    
+    // Initialize drag and drop functionality
+    setupDragAndDrop();
+  }
+  
+  // Set up drag and drop event handlers
+  function setupDragAndDrop() {
+    const orderItems = document.querySelectorAll('.order-item[draggable="true"]');
+    
+    orderItems.forEach(item => {
+      item.addEventListener('dragstart', handleDragStart);
+      item.addEventListener('dragend', handleDragEnd);
+      item.addEventListener('dragover', handleDragOver);
+      item.addEventListener('dragenter', handleDragEnter);
+      item.addEventListener('dragleave', handleDragLeave);
+      item.addEventListener('drop', handleDrop);
+    });
+  }
+  
+  // Drag start handler
+  function handleDragStart(e) {
+    this.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', this.dataset.id);
+    e.dataTransfer.effectAllowed = 'move';
+  }
+  
+  // Drag end handler
+  function handleDragEnd() {
+    this.classList.remove('dragging');
+    // Remove drag-over class from all items
+    document.querySelectorAll('.order-item').forEach(item => {
+      item.classList.remove('drag-over');
+    });
+  }
+  
+  // Drag over handler
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+  
+  // Drag enter handler
+  function handleDragEnter(e) {
+    e.preventDefault();
+    this.classList.add('drag-over');
+  }
+  
+  // Drag leave handler
+  function handleDragLeave() {
+    this.classList.remove('drag-over');
+  }
+  
+  // Drop handler - fixed to properly handle reordering
+  function handleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    
+    const draggedId = e.dataTransfer.getData('text/plain');
+    const draggedItem = document.querySelector(`.order-item[data-id="${draggedId}"]`);
+    const targetIndex = Array.from(orderList.children).indexOf(this);
+    
+    if (!draggedId || draggedId === this.dataset.id) return;
+    
+    // Find the dragged order in the array
+    const draggedOrderIndex = orders.findIndex(order => order.id.toString() === draggedId);
+    if (draggedOrderIndex === -1) return;
+    
+    // Remove the dragged item from its current position
+    const [draggedOrder] = orders.splice(draggedOrderIndex, 1);
+    
+    // Find the target position in the array
+    let newIndex;
+    if (targetIndex >= orders.length) {
+      newIndex = orders.length;
+    } else {
+      const targetId = this.dataset.id;
+      const targetOrderIndex = orders.findIndex(order => order.id.toString() === targetId);
+      newIndex = targetOrderIndex;
+    }
+    
+    // Insert it at the new position
+    orders.splice(newIndex, 0, draggedOrder);
+    
+    // Save the new order and update the display
+    localStorage.setItem('airFreshenerOrders', JSON.stringify(orders));
+    renderOrders();
+    updateLaborAnalysis();
+    renderGanttChart();
+  }
+
+  // Update labor analysis based on saved orders
+  function updateLaborAnalysis() {
+    if (orders.length === 0) {
+      document.getElementById("totalScheduledHours").textContent = "0";
+      document.getElementById("peakDailyHours").textContent = "0";
+      document.getElementById("daysOverCapacity").textContent = "0";
+      document.getElementById("currentLaborCost").textContent = "$0.00";
+      document.getElementById("additionalStaffCost").textContent = "$0.00";
+      document.getElementById("timeSavings").textContent = "0 days";
+      return;
+    }
+    
+    // Calculate total labor hours and costs
+    let totalLaborMinutes = 0;
+    let totalLaborCost = 0;
+    const hourlyRate = parseFloat(document.getElementById("hourlyRate").value) || 15.00;
+    
+    orders.forEach(order => {
+      // Extract hours from prep time string (e.g., "30 minutes (0.5 hours)")
+      const prepTimeMatch = order.prepTime.match(/\((\d+\.?\d*) hours?\)/);
+      if (prepTimeMatch) {
+        totalLaborMinutes += parseFloat(prepTimeMatch[1]) * 60;
+      }
+      
+      // Add packaging time (estimate 15 minutes per order if not available)
+      totalLaborMinutes += 15;
+      
+      // Add labor cost
+      if (order.laborCost) {
+        totalLaborCost += parseFloat(order.laborCost.replace('$', ''));
+      }
+    });
+    
+    const totalLaborHours = totalLaborMinutes / 60;
+    const dailyWorkHours = parseFloat(document.getElementById("dailyWorkHours").value) || 8;
+    const daysNeeded = Math.ceil(totalLaborHours / dailyWorkHours);
+    
+    document.getElementById("totalScheduledHours").textContent = totalLaborHours.toFixed(1);
+    document.getElementById("peakDailyHours").textContent = dailyWorkHours;
+    document.getElementById("daysOverCapacity").textContent = daysNeeded;
+    document.getElementById("currentLaborCost").textContent = `$${totalLaborCost.toFixed(2)}`;
+  }
+  
+  // Run what-if scenario
+  function runWhatIfScenario() {
+    const quantity = parseInt(document.getElementById("whatIfQuantity").value) || 10;
+    const prepTime = parseInt(document.getElementById("whatIfPrepTime").value) || 5;
+    const orderType = document.getElementById("whatIfType").value;
+    const batchCapacity = parseInt(document.getElementById("batchCapacity").value) || 5;
+    const dailyWorkHours = parseFloat(document.getElementById("dailyWorkHours").value) || 8;
+    const curingTime = parseFloat(document.getElementById("curingTime").value) || 24;
+    const packagingTime = parseFloat(document.getElementById("packagingTime").value) || 15;
+    const shippingDays = parseFloat(document.getElementById("shippingDays").value) || 1;
+    const hourlyRate = parseFloat(document.getElementById("hourlyRate").value) || 15.00;
+    
+    // Calculate production time impact
+    const batches = Math.ceil(quantity / batchCapacity);
+    const totalPrepTime = batches * prepTime;
+    const prepHours = totalPrepTime / 60;
+    const productionDays = Math.ceil(prepHours / dailyWorkHours);
+    const curingDays = Math.ceil(curingTime / 24);
+    const packagingHours = packagingTime / 60;
+    
+    const totalTimeHours = (prepHours + curingTime + packagingHours);
+    
+    // Calculate completion time
+    const now = new Date();
+    const productionEndDate = new Date(now);
+    productionEndDate.setDate(now.getDate() + productionDays);
+    
+    const curingEndDate = new Date(productionEndDate);
+    curingEndDate.setDate(productionEndDate.getDate() + curingDays);
+    
+    const shippingDate = new Date(curingEndDate);
+    shippingDate.setDate(curingEndDate.getDate() + shippingDays);
+    
+    // Calculate labor cost
+    const prepTimeCost = (prepHours * hourlyRate).toFixed(2);
+    const packagingCost = (packagingHours * hourlyRate).toFixed(2);
+    const totalLaborCost = (parseFloat(prepTimeCost) + parseFloat(packagingCost)).toFixed(2);
+    
+    // Show results
+    document.getElementById("whatIfTimeAdded").textContent = `${formatTime(totalTimeHours)} (${productionDays + curingDays} days)`;
+    document.getElementById("whatIfNewCompletion").textContent = shippingDate.toLocaleString();
+    document.getElementById("whatIfLaborImpact").textContent = `$${totalLaborCost}`;
+    document.getElementById("whatIfResults").classList.remove("hidden");
+  }
+  
+  // Add what-if order to saved orders
+  function addWhatIfOrder() {
+    const orderName = `What-If ${document.getElementById("whatIfType").value} Order`;
+    const orderType = document.getElementById("whatIfType").value;
+    const quantity = parseInt(document.getElementById("whatIfQuantity").value) || 10;
+    const prepTime = parseInt(document.getElementById("whatIfPrepTime").value) || 5;
+    const batchCapacity = parseInt(document.getElementById("batchCapacity").value) || 5;
+    const dailyWorkHours = parseFloat(document.getElementById("dailyWorkHours").value) || 8;
+    const curingTime = parseFloat(document.getElementById("curingTime").value) || 24;
+    const packagingTime = parseFloat(document.getElementById("packagingTime").value) || 15;
+    const shippingDays = parseFloat(document.getElementById("shippingDays").value) || 1;
+    const hourlyRate = parseFloat(document.getElementById("hourlyRate").value) || 15.00;
+    
+    // Calculate production time
+    const batches = Math.ceil(quantity / batchCapacity);
+    const totalPrepTime = batches * prepTime;
+    const prepHours = totalPrepTime / 60;
+    const productionDays = Math.ceil(prepHours / dailyWorkHours);
+    const curingDays = Math.ceil(curingTime / 24);
+    const packagingHours = packagingTime / 60;
+    
+    const totalTimeHours = (prepHours + curingTime + packagingHours);
+    
+    // Calculate completion time
+    const now = new Date();
+    const productionEndDate = new Date(now);
+    productionEndDate.setDate(now.getDate() + productionDays);
+    
+    const curingEndDate = new Date(productionEndDate);
+    curingEndDate.setDate(productionEndDate.getDate() + curingDays);
+    
+    const shippingDate = new Date(curingEndDate);
+    shippingDate.setDate(curingEndDate.getDate() + shippingDays);
+    
+    // Calculate labor cost
+    const prepTimeCost = (prepHours * hourlyRate).toFixed(2);
+    const packagingCost = (packagingHours * hourlyRate).toFixed(2);
+    const totalLaborCost = (parseFloat(prepTimeCost) + parseFloat(packagingCost)).toFixed(2);
+    
+    // Estimate other values
+    const totalFresheners = quantity * 10; // Assuming 10 fresheners per cardstock
+    const totalCost = (quantity * 5).toFixed(2); // Estimate $5 per cardstock
+    const totalRevenue = (totalFresheners * 3.99).toFixed(2); // Estimate $3.99 per freshener
+    const totalProfit = (parseFloat(totalRevenue) - parseFloat(totalCost) - parseFloat(totalLaborCost)).toFixed(2);
+    
+    const order = {
+      id: Date.now(),
+      name: orderName,
+      type: orderType,
+      quantity: quantity,
+      totalFresheners: totalFresheners,
+      prepTime: `${totalPrepTime} minutes (${formatTime(prepHours)})`,
+      productionTime: `${formatTime(totalTimeHours)} (${productionDays + curingDays} days)`,
+      completionDate: curingEndDate.toLocaleString(),
+      shipDate: shippingDate.toLocaleString(),
+      cost: `$${totalCost}`,
+      revenue: `$${totalRevenue}`,
+      profit: `$${totalProfit}`,
+      laborCost: `$${totalLaborCost}`,
+      timestamp: new Date().toISOString()
+    };
+    
+    orders.push(order);
+    localStorage.setItem('airFreshenerOrders', JSON.stringify(orders));
+    renderOrders();
+    updateLaborAnalysis();
+    renderGanttChart();
+    
+    alert(`What-if order "${orderName}" added to your schedule!`);
+  }
+  
+  // Calculate hiring impact
+  function calculateHiringImpact() {
+    const staffHourlyRate = parseFloat(document.getElementById("staffHourlyRate").value) || 15.00;
+    const staffHoursPerDay = parseFloat(document.getElementById("staffHoursPerDay").value) || 8;
+    const staffProductivity = parseFloat(document.getElementById("staffProductivity").value) || 30;
+    
+    // Get current workload
+    let totalLaborMinutes = 0;
+    orders.forEach(order => {
+      const prepTimeMatch = order.prepTime.match(/\((\d+\.?\d*) hours?\)/);
+      if (prepTimeMatch) {
+        totalLaborMinutes += parseFloat(prepTimeMatch[1]) * 60;
+      }
+      totalLaborMinutes += 15; // Packaging time
+    });
+    
+    const totalLaborHours = totalLaborMinutes / 60;
+    const dailyWorkHours = parseFloat(document.getElementById("dailyWorkHours").value) || 8;
+    const currentDaysNeeded = Math.ceil(totalLaborHours / dailyWorkHours);
+    
+    // Calculate with additional staff
+    const productivityFactor = 1 + (staffProductivity / 100);
+    const effectiveHoursPerDay = dailyWorkHours * productivityFactor;
+    const newDaysNeeded = Math.ceil(totalLaborHours / effectiveHoursPerDay);
+    
+    const timeReduction = currentDaysNeeded - newDaysNeeded;
+    const additionalLaborCost = staffHourlyRate * staffHoursPerDay * newDaysNeeded;
+    
+    // Estimate profit impact (very simplified)
+    const avgOrderProfit = orders.reduce((sum, order) => {
+      return sum + parseFloat(order.profit.replace('$', ''));
+    }, 0) / (orders.length || 1);
+    
+    const potentialAdditionalOrders = Math.floor((currentDaysNeeded - newDaysNeeded) * productivityFactor);
+    const netImpact = (potentialAdditionalOrders * avgOrderProfit) - additionalLaborCost;
+    
+    // Break-even calculation
+    const breakEvenVolume = Math.ceil(additionalLaborCost / avgOrderProfit);
+    
+    // Show results
+    document.getElementById("hiringTimeReduction").textContent = `${timeReduction} days (from ${currentDaysNeeded} to ${newDaysNeeded} days)`;
+    document.getElementById("hiringLaborCost").textContent = `$${additionalLaborCost.toFixed(2)}`;
+    document.getElementById("hiringNetImpact").textContent = `$${netImpact.toFixed(2)}`;
+    document.getElementById("breakEvenVolume").textContent = `${breakEvenVolume} orders`;
+    document.getElementById("hiringResults").classList.remove("hidden");
+  }
+  
+  // Calculate small batch pricing
+  function calculateSmallBatchPricing() {
+    const batchSize = parseInt(document.getElementById("smallBatchSize").value) || 10;
+    const prepTime = parseInt(document.getElementById("smallBatchPrepTime").value) || 5;
+    const hourlyRate = parseFloat(document.getElementById("hourlyRate").value) || 15.00;
+    const costPerCardstock = parseFloat(document.getElementById("costPerCardstock").value) || 0.25;
+    const costPerOzFragrance = parseFloat(document.getElementById("costPerOzFragrance").value) || 1.67;
+    const costPerOzCarrier = parseFloat(document.getElementById("costPerOzCarrier").value) || 0.50;
+    
+    // Estimate oil costs (simplified)
+    const oilPerCardstock = 0.3; // oz
+    const fragranceRatio = 0.7; // 70%
+    const oilCostPerCardstock = (oilPerCardstock * fragranceRatio * costPerOzFragrance) + 
+                               (oilPerCardstock * (1 - fragranceRatio) * costPerOzCarrier);
+    
+    // Calculate labor cost
+    const laborHours = (batchSize * prepTime) / 60;
+    const laborCost = laborHours * hourlyRate;
+    const laborCostPerUnit = laborCost / batchSize;
+    
+    // Material cost per unit
+    const materialCostPerUnit = costPerCardstock + oilCostPerCardstock;
+    
+    // Total cost per unit
+    const totalCostPerUnit = materialCostPerUnit + laborCostPerUnit;
+    
+    // Recommended pricing
+    const minPrice = totalCostPerUnit * 1.5; // 50% margin
+    const premiumPrice = totalCostPerUnit * 2; // 100% margin
+    
+    // Show results
+    document.getElementById("smallBatchLaborCost").textContent = `$${laborCostPerUnit.toFixed(2)}`;
+    document.getElementById("smallBatchMinPrice").textContent = `$${minPrice.toFixed(2)} (50% margin)`;
+    document.getElementById("smallBatchPremiumPrice").textContent = `$${premiumPrice.toFixed(2)} (100% margin)`;
+    document.getElementById("smallBatchResults").classList.remove("hidden");
+  }
+
+  // Render Gantt chart visualization
+  function renderGanttChart() {
+    ganttChart.innerHTML = "";
+    
+    if (orders.length === 0) {
+      ganttChart.innerHTML = "<p>No orders saved yet. Save some orders to see the Gantt chart.</p>";
+      return;
+    }
+    
+    // Sort orders by completion date
+    const sortedOrders = [...orders].sort((a, b) => {
+      if (a.completionDate && b.completionDate) {
+        return new Date(a.completionDate) - new Date(b.completionDate);
+      }
+      return 0;
+    });
+    
+    // Find date range
+    let minDate = new Date();
+    let maxDate = new Date();
+    
+    sortedOrders.forEach(order => {
+      if (order.completionDate) {
+        const completionDate = new Date(order.completionDate);
+        if (completionDate > maxDate) {
+          maxDate = completionDate;
+        }
+      }
+    });
+    
+    // Add buffer to max date
+    maxDate.setDate(maxDate.getDate() + 7);
+    
+    // Calculate total days in range
+    const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+    
+    // Create header row
+    const headerRow = document.createElement("div");
+    headerRow.style.display = "grid";
+    headerRow.style.gridTemplateColumns = `200px repeat(${totalDays}, 1fr)`;
+    headerRow.style.borderBottom = "1px solid #ddd";
+    headerRow.style.marginBottom = "10px";
+    
+    // Add empty cell for row labels
+    const emptyCell = document.createElement("div");
+    emptyCell.style.padding = "8px";
+    emptyCell.style.fontWeight = "bold";
+    headerRow.appendChild(emptyCell);
+    
+    // Add day headers
+    for (let i = 0; i < totalDays; i++) {
+      const date = new Date(minDate);
+      date.setDate(minDate.getDate() + i);
+      
+      const dayCell = document.createElement("div");
+      dayCell.style.padding = "8px";
+      dayCell.style.textAlign = "center";
+      dayCell.style.fontSize = "12px";
+      dayCell.style.borderLeft = "1px solid #eee";
+      
+      if (i === 0 || date.getDate() === 1) {
+        dayCell.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        dayCell.style.fontWeight = "bold";
+      } else {
+        dayCell.textContent = date.getDate();
+      }
+      
+      // Highlight today
+      const today = new Date();
+      if (date.getDate() === today.getDate() && 
+          date.getMonth() === today.getMonth() && 
+          date.getFullYear() === today.getFullYear()) {
+        dayCell.style.backgroundColor = "#f0f8ff";
+        dayCell.style.fontWeight = "bold";
+      }
+      
+      headerRow.appendChild(dayCell);
+    }
+    
+    ganttChart.appendChild(headerRow);
+    
+    // Add each order to the chart
+    sortedOrders.forEach(order => {
+      if (!order.completionDate) return;
+      
+      const completionDate = new Date(order.completionDate);
+      const productionDays = parseInt(order.prepTime.match(/\d+/)?.[0]) || 1;
+      const curingDays = parseInt(order.totalCuringTime?.match(/\d+/)?.[0]) || 1;
+      
+      // Estimate start date (completion date minus production and curing days)
+      const startDate = new Date(completionDate);
+      startDate.setDate(completionDate.getDate() - productionDays - curingDays);
+      
+      // Create row
+      const row = document.createElement("div");
+      row.style.display = "grid";
+      row.style.gridTemplateColumns = `200px repeat(${totalDays}, 1fr)`;
+      row.style.marginBottom = "5px";
+      
+      // Add order name
+      const nameCell = document.createElement("div");
+      nameCell.style.padding = "8px";
+      nameCell.style.whiteSpace = "nowrap";
+      nameCell.style.overflow = "hidden";
+      nameCell.style.textOverflow = "ellipsis";
+      nameCell.textContent = order.name;
+      
+      // Add badge for order type
+      let badge = "";
+      if (order.type === "rush") {
+        badge = '<span class="rush-badge" style="margin-left: 8px;">RUSH</span>';
+      } else if (order.type === "wholesale") {
+        badge = '<span class="wholesale-badge" style="margin-left: 8px;">WHOLESALE</span>';
+      } else if (order.type === "special") {
+        badge = '<span class="special-badge" style="margin-left: 8px;">SPECIAL</span>';
+      }
+      nameCell.innerHTML += badge;
+      
+      row.appendChild(nameCell);
+      
+      // Add day cells
+      for (let i = 0; i < totalDays; i++) {
+        const currentDate = new Date(minDate);
+        currentDate.setDate(minDate.getDate() + i);
+        
+        const dayCell = document.createElement("div");
+        dayCell.style.padding = "2px";
+        dayCell.style.borderLeft = "1px solid #eee";
+        
+        // Check if current date is within production, curing, or shipping phase
+        if (currentDate >= startDate && currentDate < new Date(startDate.getTime() + productionDays * 24 * 60 * 60 * 1000)) {
+          // Production phase
+          dayCell.style.backgroundColor = "#e8f5e9";
+          dayCell.style.borderLeft = "3px solid #2ecc71";
+        } else if (currentDate >= new Date(startDate.getTime() + productionDays * 24 * 60 * 60 * 1000) && 
+                   currentDate < new Date(startDate.getTime() + (productionDays + curingDays) * 24 * 60 * 60 * 1000)) {
+          // Curing phase
+          dayCell.style.backgroundColor = "#fff3e0";
+          dayCell.style.borderLeft = "3px solid #f39c12";
+        } else if (currentDate >= new Date(startDate.getTime() + (productionDays + curingDays) * 24 * 60 * 60 * 1000) && 
+                   currentDate <= completionDate) {
+          // Shipping phase
+          dayCell.style.backgroundColor = "#f3e5f5";
+          dayCell.style.borderLeft = "3px solid #9c27b0";
+        }
+        
+        // Add tooltip with order details
+        if (dayCell.style.backgroundColor) {
+          let phase = "";
+          if (dayCell.style.backgroundColor === "#e8f5e9") {
+            phase = "Production";
+          } else if (dayCell.style.backgroundColor === "#fff3e0") {
+            phase = "Curing";
+          } else {
+            phase = "Shipping Prep";
+          }
+          
+          dayCell.setAttribute('title', `${order.name}\n${phase}\nDue: ${order.completionDate}`);
+        }
+        
+        row.appendChild(dayCell);
+      }
+      
+      ganttChart.appendChild(row);
+    });
+  }
+
+  // Fixed PDF export function
+  function saveAsPDF() {
+    // Initialize jsPDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(40, 60, 80);
+    doc.text("Air Freshener Production Report", 105, 20, { align: 'center' });
+    
+    // Date
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 105, 30, { align: 'center' });
+    
+    // Summary Table
+    doc.autoTable({
+      startY: 40,
+      head: [['Metric', 'Value']],
+      body: [
+        ['Total Fresheners', document.getElementById("totalFresheners").textContent],
+        ['Cost per Freshener', document.getElementById("costPerFreshener").textContent],
+        ['Selling Price', document.getElementById("sellingPriceResult").textContent],
+        ['Profit per Freshener', document.getElementById("profitPerFreshener").textContent],
+        ['Profit Margin', document.getElementById("profitMarginResult").textContent],
+        ['Estimated Longevity', document.getElementById("estimatedLongevity").textContent + ' days'],
+        ['Total Production Cost', document.getElementById("totalCost").textContent],
+        ['Total Revenue', document.getElementById("totalRevenue").textContent],
+        ['Total Profit', document.getElementById("totalProfit").textContent],
+        ['Batch Processing', document.getElementById("batchDetails").textContent],
+        ['Total Preparation Time', document.getElementById("totalPrepTime").textContent],
+        ['Curing Time', document.getElementById("totalCuringTime").textContent],
+        ['Total Production Time', document.getElementById("totalProductionTime").textContent],
+        ['Estimated Completion', document.getElementById("estimatedCompletion").textContent],
+        ['Estimated Ship Date', document.getElementById("estimatedShipDate").textContent]
+      ],
+      headStyles: {
+        fillColor: [52, 152, 219],
+        textColor: [255, 255, 255]
+      },
+      theme: 'grid'
+    });
+    
+    // Cost Breakdown
+    doc.setFontSize(14);
+    doc.setTextColor(40, 60, 80);
+    doc.text("Cost Breakdown", 14, doc.autoTable.previous.finalY + 15);
+    
+    doc.autoTable({
+      startY: doc.autoTable.previous.finalY + 20,
+      body: [
+        ['Fragrance Oil', document.getElementById("fragranceCost").textContent],
+        ['Carrier Oil', document.getElementById("carrierCost").textContent],
+        ['Cardstock', document.getElementById("cardstockCost").textContent],
+        ['Total Cost', document.getElementById("totalCost").textContent]
+      ],
+      columnStyles: {
+        1: { fontStyle: 'bold' }
+      }
+    });
+    
+    // Oil Requirements
+    doc.setFontSize(14);
+    doc.setTextColor(40, 60, 80);
+    doc.text("Oil Requirements", 14, doc.autoTable.previous.finalY + 15);
+    
+    doc.autoTable({
+      startY: doc.autoTable.previous.finalY + 20,
+      body: [
+        ['Total Oil Needed', document.getElementById("totalOil").textContent + ' oz'],
+        ['Fragrance Oil', document.getElementById("fragranceOil").textContent + ' oz'],
+        ['Carrier Oil', document.getElementById("carrierOilAmount").textContent + ' oz'],
+        ['Oil per Freshener', document.getElementById("oilPerFreshener").textContent + ' oz']
+      ]
+    });
+
+    // Production Time
+    doc.setFontSize(14);
+    doc.setTextColor(40, 60, 80);
+    doc.text("Production Timeline", 14, doc.autoTable.previous.finalY + 15);
+    
+    doc.autoTable({
+      startY: doc.autoTable.previous.finalY + 20,
+      body: [
+        ['Batch Processing', document.getElementById("batchDetails").textContent],
+        ['Preparation Time', document.getElementById("totalPrepTime").textContent],
+        ['Curing Time', document.getElementById("totalCuringTime").textContent],
+        ['Packaging Time', document.getElementById("packagingTimeResult").textContent],
+        ['Total Production Time', document.getElementById("totalProductionTime").textContent],
+        ['Estimated Completion', document.getElementById("estimatedCompletion").textContent],
+        ['Estimated Ship Date', document.getElementById("estimatedShipDate").textContent]
+      ]
+    });
+    
+    // Labor Costs
+    doc.setFontSize(14);
+    doc.setTextColor(40, 60, 80);
+    doc.text("Labor Cost Analysis", 14, doc.autoTable.previous.finalY + 15);
+    
+    doc.autoTable({
+      startY: doc.autoTable.previous.finalY + 20,
+      body: [
+        ['Preparation Time Cost', document.getElementById("prepTimeCost").textContent],
+        ['Packaging Time Cost', document.getElementById("packagingCost").textContent],
+        ['Total Labor Cost', document.getElementById("totalLaborCost").textContent],
+        ['Labor Cost per Freshener', document.getElementById("laborCostPerFreshener").textContent],
+        ['Total Cost with Labor', document.getElementById("totalCostWithLabor").textContent],
+        ['Profit After Labor', document.getElementById("totalProfitAfterLabor").textContent]
+      ]
+    });
+    
+    // Save the PDF
+    doc.save("AirFreshener_Production_Report.pdf");
+  }
+
+  // Save as Excel function
+  function saveAsExcel() {
+    const wb = XLSX.utils.book_new();
+    
+    // Main Results Sheet
+    const wsData = [
+      ["AIR FRESHENER PRODUCTION REPORT"],
+      [`Generated: ${new Date().toLocaleString()}`],
+      [""],
+      ["SUMMARY"],
+      ["Total Fresheners", document.getElementById("totalFresheners").textContent],
+      ["Estimated Longevity (days)", document.getElementById("estimatedLongevity").textContent],
+      ["Total Production Cost", document.getElementById("totalCost").textContent],
+      ["Cost per Freshener", document.getElementById("costPerFreshener").textContent],
+      ["Selling Price per Freshener", document.getElementById("sellingPriceResult").textContent],
+      ["Profit per Freshener", document.getElementById("profitPerFreshener").textContent],
+      ["Profit Margin", document.getElementById("profitMarginResult").textContent],
+      ["Total Revenue", document.getElementById("totalRevenue").textContent],
+      ["Total Profit", document.getElementById("totalProfit").textContent],
+      [""],
+      ["PRODUCTION TIMELINE"],
+      ["Batch Processing", document.getElementById("batchDetails").textContent],
+      ["Preparation Time", document.getElementById("totalPrepTime").textContent],
+      ["Curing Time", document.getElementById("totalCuringTime").textContent],
+      ["Packaging Time", document.getElementById("packagingTimeResult").textContent],
+      ["Total Production Time", document.getElementById("totalProductionTime").textContent],
+      ["Estimated Completion", document.getElementById("estimatedCompletion").textContent],
+      ["Estimated Ship Date", document.getElementById("estimatedShipDate").textContent],
+      [""],
+      ["COST ANALYSIS"],
+      ["Fragrance Oil Cost", document.getElementById("fragranceCost").textContent],
+      ["Carrier Oil Cost", document.getElementById("carrierCost").textContent],
+      ["Cardstock Cost", document.getElementById("cardstockCost").textContent],
+      [""],
+      ["OIL REQUIREMENTS"],
+      ["Total Oil Needed (oz)", document.getElementById("totalOil").textContent],
+      ["Fragrance Oil (oz)", document.getElementById("fragranceOil").textContent],
+      ["Carrier Oil (oz)", document.getElementById("carrierOilAmount").textContent],
+      [""],
+      ["MATERIAL PROPERTIES"],
+      ["Cardstock Area (in²)", document.getElementById("cardstockArea").textContent],
+      ["Absorption Rate (oz/in²)", document.getElementById("absorptionRate").textContent],
+      ["Adjusted Absorption", document.getElementById("adjustedAbsorption").textContent],
+      [""],
+      ["LABOR COSTS"],
+      ["Preparation Time Cost", document.getElementById("prepTimeCost").textContent],
+      ["Packaging Time Cost", document.getElementById("packagingCost").textContent],
+      ["Total Labor Cost", document.getElementById("totalLaborCost").textContent],
+      ["Labor Cost per Unit", document.getElementById("laborCostPerFreshener").textContent],
+      ["Total Cost with Labor", document.getElementById("totalCostWithLabor").textContent],
+      ["Profit After Labor", document.getElementById("totalProfitAfterLabor").textContent]
+    ];
+
+    // Add blend breakdowns if applicable
+    const carrierOil = document.getElementById("carrierOil").value;
+    if (carrierOil === "ExtraLongevity") {
+      wsData.push(
+        [""],
+        ["EXTRA LONGEVITY BLEND"],
+        ["IPM Amount (oz)", document.getElementById("ipmAmount").textContent],
+        ["DPG Amount (oz)", document.getElementById("dpgAmount").textContent]
+      );
+    } else if (carrierOil === "DPG_FCO") {
+      wsData.push(
+        [""],
+        ["DPG + FCO BLEND"],
+        ["DPG Amount (oz)", document.getElementById("dpgFco_dpgAmount").textContent],
+        ["FCO Amount (oz)", document.getElementById("dpgFco_fcoAmount").textContent]
+      );
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb, ws, "Production Summary");
+    
+    // Input Parameters Sheet
+    const inputData = [
+      ["INPUT PARAMETERS"],
+      ["Environment", document.getElementById("environmentPreset").value || "Custom"],
+      ["Temperature (°F)", document.getElementById("temperature").value],
+      ["Humidity (%)", document.getElementById("humidity").value],
+      ["Cardstock Size", `${document.getElementById("length").value}" × ${document.getElementById("width").value}"`],
+      ["Thickness (mm)", document.getElementById("thickness").value === "custom" ? 
+        document.getElementById("customThickness").value : document.getElementById("thickness").value],
+      ["Fragrance Ratio (%)", document.getElementById("fragranceRatio").value],
+      ["Carrier Oil", document.getElementById("carrierOil").options[document.getElementById("carrierOil").selectedIndex].text],
+      ["Cost per Cardstock ($)", document.getElementById("costPerCardstock").value],
+      ["Cardstocks Used", document.getElementById("quantity").value],
+      ["Preparation Time per Cardstock (min)", document.getElementById("prepTime").value],
+      ["Batch Capacity", document.getElementById("batchCapacity").options[document.getElementById("batchCapacity").selectedIndex].text],
+      ["Daily Work Hours", document.getElementById("dailyWorkHours").value],
+      ["Curing Time (hours)", document.getElementById("curingTime").value],
+      ["Packaging Time (min)", document.getElementById("packagingTime").value],
+      ["Shipping Processing Days", document.getElementById("shippingDays").value],
+      ["Selling Price ($)", document.getElementById("sellingPrice").value || "Calculated from margin"],
+      ["Profit Margin (%)", document.getElementById("profitMargin").value],
+      ["Hourly Labor Rate ($)", document.getElementById("hourlyRate").value],
+      ["Order Type", document.getElementById("orderType").options[document.getElementById("orderType").selectedIndex].text]
+    ];
+    const wsInputs = XLSX.utils.aoa_to_sheet(inputData);
+    XLSX.utils.book_append_sheet(wb, wsInputs, "Input Parameters");
+
+    XLSX.writeFile(wb, "AirFreshener_Production_Report.xlsx");
+  }
+
+
+</script>
+</body>
+</html>
