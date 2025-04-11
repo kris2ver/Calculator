@@ -5,91 +5,838 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OilCraft Pro</title>
     <style>
-        /* ===== MODERN DARK BANNER ===== */
+        /* === DARK BANNER === */
         .header {
-            background: #222; /* Slightly softer than pure black */
+            background: #222;
             width: 100%;
-            padding: 50px 0; /* Increased vertical padding */
+            padding: 50px 0;
             margin: 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
+        /* === TABS === */
+        .tab {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
         }
-        
-        /* ===== LOGO STYLING ===== */
-        .logo {
-            height: 180px; /* Increased for impact */
-            width: auto;
-            transition: all 0.3s ease; /* Smooth hover effects */
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
         }
-        
-        .logo:hover {
-            transform: scale(1.03); /* Subtle interactive effect */
-        }
-        
-        /* ===== MAIN CONTENT ===== */
-        body {
-            margin: 0;
-            font-family: 'Open Sans', sans-serif;
-            background: #f8f8f8;
-            line-height: 1.6;
-        }
-        
-        .content {
-            padding: 50px 20px;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        /* ===== CALL-TO-ACTION BUTTON ===== */
-        .btn {
+        .tab-btn.active {
             background: #2E7D32;
             color: white;
-            padding: 14px 28px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 30px;
-            font-size: 1.1em;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
         }
         
-        .btn:hover {
-            background: transparent;
-            color: #2E7D32;
-            border-color: #2E7D32;
-        }
-        
-        /* ===== MOBILE RESPONSIVENESS ===== */
-        @media (max-width: 768px) {
-            .logo {
-                height: 140px; /* Slightly smaller on mobile */
-            }
-            .header {
-                padding: 30px 0;
-            }
+        /* === CALCULATOR (FROM YOUR CODE_1.HTML) === */
+        .calculator {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- ===== HERO BANNER ===== -->
-    <header class="header">
-        <div class="header-content">
-            <img src="OilCraftPro.png" alt="OilCraft Pro" class="logo">
-        </div>
-    </header>
+    <!-- DARK BANNER WITH LOGO -->
+    <div class="header">
+        <img src="OilCraftPro.png" alt="OilCraft Pro" class="logo">
+    </div>
+    
+    <!-- TAB SYSTEM -->
+    <div class="tab">
+        <button class="tab-btn active" onclick="openTab('dashboard')">Dashboard</button>
+        <button class="tab-btn" onclick="openTab('calculator')">Calculator</button>
+    </div>
+    
+    <!-- CALCULATOR CONTENT (PASTE YOUR CODE_1.HTML HERE) -->
+    <div id="calculator" class="calculator" style="display:none;">
+        <div id="formulation" class="tab-content active">
+            <div class="card">
+                <h2>Scent Profile</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="scentType">Primary Scent Type:</label>
+                        <select id="scentType">
+                            <option value="floral">Floral</option>
+                            <option value="citrus">Citrus</option>
+                            <option value="woody">Woody</option>
+                            <option value="herbal">Herbal</option>
+                            <option value="spicy">Spicy</option>
+                            <option value="fresh">Fresh</option>
+                            <option value="sweet">Sweet</option>
+                            <option value="musky">Musky</option>
+                            <option value="custom">Custom Blend</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="scentIntensity">Scent Intensity:</label>
+                        <div class="intensity-slider">
+                            <div class="slider-container">
+                                <input type="range" id="scentIntensity" min="1" max="10" value="5">
+                                <span class="slider-value" id="intensityValue">5</span>
+                            </div>
+                            <div class="slider-labels">
+                                <span>Subtle</span>
+                                <span>Moderate</span>
+                                <span>Strong</span>
+                            </div>
+                        </div>
+                        <p class="note">Adjust based on desired scent strength</p>
+                    </div>
+                </div>
+                
+                <div class="scent-profile-selector">
+                    <div class="scent-profile" data-type="floral" onclick="selectScentProfile(this)">
+                        <i>🌸</i>
+                        <h4>Floral</h4>
+                        <p>Rose, Lavender, Jasmine</p>
+                    </div>
+                    <div class="scent-profile" data-type="citrus" onclick="selectScentProfile(this)">
+                        <i>🍊</i>
+                        <h4>Citrus</h4>
+                        <p>Lemon, Orange, Grapefruit</p>
+                    </div>
+                    <div class="scent-profile" data-type="woody" onclick="selectScentProfile(this)">
+                        <i>🌲</i>
+                        <h4>Woody</h4>
+                        <p>Sandalwood, Cedar, Pine</p>
+                    </div>
+                    <div class="scent-profile" data-type="herbal" onclick="selectScentProfile(this)">
+                        <i>🌿</i>
+                        <h4>Herbal</h4>
+                        <p>Eucalyptus, Mint, Basil</p>
+                    </div>
+                    <div class="scent-profile" data-type="spicy" onclick="selectScentProfile(this)">
+                        <i>🌶️</i>
+                        <h4>Spicy</h4>
+                        <p>Cinnamon, Clove, Vanilla</p>
+                    </div>
+                    <div class="scent-profile" data-type="fresh" onclick="selectScentProfile(this)">
+                        <i>🍃</i>
+                        <h4>Fresh</h4>
+                        <p>Ocean, Rain, Clean Linen</p>
+                    </div>
+                    <div class="scent-profile" data-type="sweet" onclick="selectScentProfile(this)">
+                        <i>🍬</i>
+                        <h4>Sweet</h4>
+                        <p>Vanilla, Caramel, Cotton Candy</p>
+                    </div>
+                    <div class="scent-profile" data-type="musky" onclick="selectScentProfile(this)">
+                        <i>🦌</i>
+                        <h4>Musky</h4>
+                        <p>Amber, Musk, Leather</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Order Information</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="orderName">Order Name/Client:</label>
+                        <input type="text" id="orderName" placeholder="e.g., Spring Wedding, Coffee Shop Chain, Holiday Peppermint">
+                        <p class="note">Use to track client names or special orders</p>
+                    </div>
 
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="content">
-        <p style="font-size: 1.2em; color: #555;">Precision oil blending for professional air freshener production</p>
-        <a href="Code_1.html" class="btn">Launch Calculator</a>
-    </main>
+                    <div class="input-group">
+                        <label for="orderType">Order Type:</label>
+                        <select id="orderType">
+                            <option value="standard">Standard</option>
+                            <option value="rush">Rush Order</option>
+                            <option value="wholesale">Wholesale</option>
+                            <option value="special">Special Project</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="orderDueDate">Due Date (optional):</label>
+                        <input type="date" id="orderDueDate">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Environmental Factors</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="environmentPreset">Environment Preset:</label>
+                        <select id="environmentPreset">
+                            <option value="">Custom</option>
+                            <option value="hotDry">Hot & Dry (90°F, 20%)</option>
+                            <option value="hotHumid">Hot & Humid (90°F, 70%)</option>
+                            <option value="mild">Mild (72°F, 50%)</option>
+                            <option value="coolDry">Cool & Dry (60°F, 30%)</option>
+                            <option value="coolHumid">Cool & Humid (60°F, 70%)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="temperature">Ambient Temperature (°F):</label>
+                        <input type="number" id="temperature" placeholder="e.g., 72">
+                        <p class="note">Higher temps speed up evaporation</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="humidity">Humidity (%):</label>
+                        <input type="number" id="humidity" placeholder="e.g., 50">
+                        <p class="note">Higher humidity slows down evaporation slightly</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="roomSize">Room Size (sq ft):</label>
+                        <input type="number" id="roomSize" placeholder="e.g., 200">
+                        <p class="note">For scent distribution calculation (use 10-20 for cars)</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="airflow">Airflow Level:</label>
+                        <select id="airflow">
+                            <option value="low">Low (Closed room)</option>
+                            <option value="medium" selected>Medium (Normal ventilation)</option>
+                            <option value="high">High (Open windows/fans)</option>
+                            <option value="car">Car (enclosed space with air circulation)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">  
+                <h2>Material Specifications</h2>  
+                <div class="form-grid">  
+                    <div class="input-group">  
+                        <label for="length">Length of Cardstock (in):</label>  
+                        <input type="number" id="length" step="0.01" placeholder="e.g., 8.5">  
+                        <p class="note">Standard letter size is 8.5 × 11 inches</p>  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="width">Width of Cardstock (in):</label>  
+                        <input type="number" id="width" step="0.01" placeholder="e.g., 11">  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="thickness">Cardstock Thickness (mm):</label>  
+                        <select id="thickness">  
+                            <option value="2">2mm (Standard)</option>  
+                            <option value="3">3mm (Premium)</option>  
+                            <option value="custom">Custom</option>  
+                        </select>  
+                    </div>  
+                    
+                    <div class="input-group hidden" id="customThicknessGroup">  
+                        <label for="customThickness">Custom Thickness (mm):</label>  
+                        <input type="number" id="customThickness" step="0.1" min="0.1">  
+                    </div>  
+                </div>  
+            </div>  
+
+            <div class="card">  
+                <h2>Oil Absorption Data</h2>  
+                <div class="form-grid">  
+                    <div class="input-group">  
+                        <label for="dryWeight">Dry Weight of Cardstock (oz):</label>  
+                        <input type="number" id="dryWeight" step="0.001" placeholder="e.g., 0.5">  
+                        <p class="note">Weight before adding any oils</p>  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="absorbedWeight">Saturated Weight of Cardstock (oz):</label>  
+                        <input type="number" id="absorbedWeight" step="0.001" placeholder="e.g., 0.8">  
+                        <p class="note">Weight after full oil saturation</p>  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="absorptionAdjustment">Absorption Adjustment Factor:</label>  
+                        <select id="absorptionAdjustment">  
+                            <option value="1">Full Saturation (100%) - Maximum Scent</option>  
+                            <option value="0.8" selected>Practical Saturation (80%) - Balanced Diffusion</option>  
+                            <option value="0.7">Reduced Saturation (70%) - Slowest Release</option>  
+                        </select>  
+                    </div>  
+                </div>  
+            </div>  
+
+            <div class="card">  
+                <h2>Oil Formulation</h2>  
+                <div class="form-grid">  
+                    <div class="input-group">  
+                        <label for="fragranceRatio">Fragrance Oil Ratio (%):</label>  
+                        <input type="number" id="fragranceRatio" value="70" min="0" max="100">  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="carrierOil">Carrier Oil Type:</label>  
+                        <select id="carrierOil">  
+                            <option value="IPM" selected>Isopropyl Myristate (IPM)</option>  
+                            <option value="DPG">Dipropylene Glycol (DPG)</option>  
+                            <option value="FCO">Fractionated Coconut Oil (FCO)</option>  
+                            <option value="Alcohol">Alcohol (Fast-Evaporating)</option>  
+                            <option value="ExtraLongevity">Extra Longevity Blend (50% IPM + 50% DPG)</option>
+                            <option value="DPG_FCO">DPG + FCO Blend (70% DPG + 30% FCO)</option>
+                            <option value="Augeo">Augeo Oil</option>
+                            <option value="Almond">Almond Oil</option>
+                            <option value="Mineral">Mineral Oil</option>
+                        </select>  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="costPerOzFragrance">Cost per oz of Fragrance Oil ($):</label>  
+                        <input type="number" id="costPerOzFragrance" step="0.01" value="1.67" min="0">  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="costPerOzCarrier">Cost per oz of Carrier Oil ($):</label>  
+                        <input type="number" id="costPerOzCarrier" step="0.01" value="0.50" min="0">  
+                    </div>  
+
+                    <div class="input-group">
+                        <label for="costPerCardstock">Cost per Cardstock ($):</label>
+                        <input type="number" id="costPerCardstock" step="0.01" value="0.25" min="0">
+                        <p class="note">Cost for each blank cardstock</p>
+                    </div>
+                </div>  
+                
+                <div id="carrierProperties" class="carrier-properties hidden">  
+                    <h4>Selected Carrier Properties</h4>  
+                    <p><strong>Evaporation Rate:</strong> <span id="evaporationRate">—</span></p>  
+                    <p><strong>Recommended Use:</strong> <span id="recommendedUse">—</span></p>  
+                    <p><strong>Notes:</strong> <span id="carrierNotes">—</span></p>  
+                </div>  
+                
+                <div class="recommendation-cards">
+                    <div class="recommendation-card">
+                        <h4>Scent Type Recommendation</h4>
+                        <p id="scentTypeRecommendation">Based on your selected scent type, we recommend...</p>
+                    </div>
+                    <div class="recommendation-card">
+                        <h4>Carrier Oil Recommendation</h4>
+                        <p id="carrierOilRecommendation">Based on your longevity needs, we recommend...</p>
+                    </div>
+                    <div class="recommendation-card">
+                        <h4>Environment Recommendation</h4>
+                        <p id="environmentRecommendation">For your environment conditions, we suggest...</p>
+                    </div>
+                </div>
+            </div>  
+            
+            <div class="card">  
+                <h2>Production Parameters</h2>  
+                <div class="form-grid">  
+                    <div class="input-group">  
+                        <label for="quantity">Quantity of Cardstocks:</label>  
+                        <input type="number" id="quantity" value="1" min="1">  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="freshenerArea">Individual Freshener Area (in²):</label>  
+                        <input type="number" id="freshenerArea" step="0.1" placeholder="e.g., 12 for 3×4 inches">  
+                    </div>  
+                    
+                    <div class="input-group">  
+                        <label for="desiredLongevity">Desired Longevity (days):</label>  
+                        <input type="number" id="desiredLongevity" step="1" min="1" placeholder="e.g., 30">  
+                        <p class="note">Leave blank if you want the calculator to estimate</p>  
+                    </div>  
+                </div>  
+            </div>
+        </div>
+        
+        <div id="visualization" class="tab-content">
+            <div class="card">
+                <h2>Scent Performance Visualization</h2>
+                <div class="chart-container">
+                    <div class="chart-actions">
+                        <button onclick="resetChartZoom('longevityChart')">Reset View</button>
+                    </div>
+                    <h3 class="chart-title">Scent Longevity Projection</h3>
+                    <canvas id="longevityChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Scent Strength Over Time</h3>
+                    <canvas id="strengthChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Cost vs. Performance Analysis</h3>
+                    <canvas id="costPerformanceChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Environmental Impact Simulation</h3>
+                    <canvas id="environmentChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Compare Carrier Oils</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Carrier Oil</th>
+                                <th>Evaporation Rate</th>
+                                <th>Cost per oz</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody id="carrierComparisonTable">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Compare Fragrance Ratios</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Fragrance Ratio</th>
+                                <th>Intensity</th>
+                                <th>Longevity</th>
+                                <th>Cost Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ratioComparisonTable">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="commercial" class="tab-content">
+            <div class="card">
+                <h2>Commercial Features</h2>
+                
+                <div class="commercial-features">
+                    <div class="commercial-card">
+                        <h4>Wholesale Pricing Tiers</h4>
+                        <div class="input-group">
+                            <label for="wholesaleBasePrice">Base Price per Unit ($):</label>
+                            <input type="number" id="wholesaleBasePrice" step="0.01" value="3.99">
+                        </div>
+                        <div class="input-group">
+                            <label for="wholesaleTier1">Tier 1 (50+ units) Discount (%):</label>
+                            <input type="number" id="wholesaleTier1" value="10">
+                        </div>
+                        <div class="input-group">
+                            <label for="wholesaleTier2">Tier 2 (100+ units) Discount (%):</label>
+                            <input type="number" id="wholesaleTier2" value="15">
+                        </div>
+                        <div class="input-group">
+                            <label for="wholesaleTier3">Tier 3 (250+ units) Discount (%):</label>
+                            <input type="number" id="wholesaleTier3" value="20">
+                        </div>
+                        <button onclick="calculateWholesalePricing()">Calculate Wholesale Pricing</button>
+                        <div id="wholesaleResults" style="margin-top: 15px;"></div>
+                    </div>
+                    
+                    <div class="commercial-card">
+                        <h4>Subscription Model Analysis</h4>
+                        <div class="input-group">
+                            <label for="subMonthlyPrice">Monthly Price per Unit ($):</label>
+                            <input type="number" id="subMonthlyPrice" step="0.01" value="3.50">
+                        </div>
+                        <div class="input-group">
+                            <label for="subDuration">Subscription Duration (months):</label>
+                            <input type="number" id="subDuration" value="6">
+                        </div>
+                        <div class="input-group">
+                            <label for="subRetention">Estimated Retention Rate (%):</label>
+                            <input type="number" id="subRetention" value="70">
+                        </div>
+                        <div class="input-group">
+                            <label for="subCustomers">Number of Subscribers:</label>
+                            <input type="number" id="subCustomers" value="100">
+                        </div>
+                        <button onclick="calculateSubscriptionProfit()">Calculate Subscription Profit</button>
+                        <div id="subscriptionResults" style="margin-top: 15px;"></div>
+                    </div>
+                    
+                    <div class="commercial-card">
+                        <h4>Bulk Discount Impact</h4>
+                        <div class="input-group">
+                            <label for="bulkBaseCost">Base Cost per Unit ($):</label>
+                            <input type="number" id="bulkBaseCost" step="0.01" value="1.50">
+                        </div>
+                        <div class="input-group">
+                            <label for="bulkDiscount">Bulk Discount (%):</label>
+                            <input type="number" id="bulkDiscount" value="15">
+                        </div>
+                        <div class="input-group">
+                            <label for="bulkMinQty">Minimum Quantity for Discount:</label>
+                            <input type="number" id="bulkMinQty" value="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="bulkOrderSize">Order Size:</label>
+                            <input type="number" id="bulkOrderSize" value="150">
+                        </div>
+                        <button onclick="calculateBulkImpact()">Calculate Bulk Impact</button>
+                        <div id="bulkResults" style="margin-top: 15px;"></div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Profitability Comparison</h3>
+                    <canvas id="profitabilityChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div id="production" class="tab-content">
+            <div class="card">
+                <h2>Pricing & Profit Margin</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="sellingPrice">Selling Price per Freshener ($):</label>
+                        <input type="number" id="sellingPrice" step="0.01" placeholder="e.g., 3.99" min="0">
+                        <p class="note">Leave blank to calculate based on profit margin</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="profitMargin">Desired Profit Margin (%):</label>
+                        <input type="number" id="profitMargin" step="1" value="50" min="0" max="100">
+                        <p class="note">Percentage of selling price that is profit</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Production Timeline</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="prepTime">Preparation Time per Cardstock (minutes):</label>
+                        <input type="number" id="prepTime" value="5" min="1">
+                        <p class="note">Time to cut, apply oils, etc. per cardstock</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="curingTime">Curing Time (hours):</label>
+                        <input type="number" id="curingTime" value="24" min="1">
+                        <p class="note">Time needed for oils to fully absorb</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="batchCapacity">Batch Processing Capacity:</label>
+                        <select id="batchCapacity">
+                            <option value="1">1 cardstock at a time</option>
+                            <option value="2">2 cardstocks at a time</option>
+                            <option value="5" selected>5 cardstocks at a time</option>
+                            <option value="10">10 cardstocks at a time</option>
+                            <option value="20">20 cardstocks at a time</option>
+                            <option value="50">50 cardstocks at a time</option>
+                        </select>
+                        <p class="note">How many cardstocks you can prepare simultaneously</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="dailyWorkHours">Daily Work Hours:</label>
+                        <input type="number" id="dailyWorkHours" value="8" min="1" max="24">
+                        <p class="note">How many hours per day you can work on production</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="packagingTime">Packaging Time per Order (minutes):</label>
+                        <input type="number" id="packagingTime" value="15" min="1">
+                        <p class="note">Time to package all fresheners from one order</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="shippingDays">Shipping Processing Days:</label>
+                        <input type="number" id="shippingDays" value="1" min="0">
+                        <p class="note">Days needed to process shipping after completion</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Labor Costs</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="hourlyRate">Hourly Labor Rate ($):</label>
+                        <input type="number" id="hourlyRate" step="0.01" value="15.00" min="0">
+                        <p class="note">Your hourly wage or cost of labor</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="rushSurcharge">Rush Order Surcharge (%):</label>
+                        <input type="number" id="rushSurcharge" step="1" value="20" min="0">
+                        <p class="note">Additional percentage for rush orders</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="wholesaleDiscount">Wholesale Discount (%):</label>
+                        <input type="number" id="wholesaleDiscount" step="1" value="15" min="0" max="50">
+                        <p class="note">Discount applied to wholesale orders</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Room Size Calculator</h2>
+                <div class="room-calculator">
+                    <div class="room-calculator-grid">
+                        <div class="input-group">
+                            <label for="roomLength">Room Length (ft):</label>
+                            <input type="number" id="roomLength" placeholder="e.g., 12">
+                        </div>
+                        <div class="input-group">
+                            <label for="roomWidth">Room Width (ft):</label>
+                            <input type="number" id="roomWidth" placeholder="e.g., 15">
+                        </div>
+                        <div class="input-group">
+                            <label for="roomHeight">Room Height (ft):</label>
+                            <input type="number" id="roomHeight" placeholder="e.g., 8">
+                        </div>
+                        <div class="input-group">
+                            <label for="roomVentilation">Ventilation:</label>
+                            <select id="roomVentilation">
+                                <option value="low">Low (Closed room)</option>
+                                <option value="medium" selected>Medium (Normal ventilation)</option>
+                                <option value="high">High (Open windows/fans)</option>
+                                <option value="car">Car (enclosed space with air circulation)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="calculateRoomRequirements()">Calculate Requirements</button>
+                    <div id="roomResults" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="error" class="error"></div>  
+        
+        <div class="button-group">  
+            <button id="calculate">Calculate</button>  
+            <button id="reset" class="secondary">Reset</button>  
+            <button id="saveAsPDF">Save as PDF</button>  
+            <button id="saveAsExcel">Save as Excel</button>  
+            <button id="saveOrder" class="labor">Save Order</button>
+        </div>  
+        
+        <div id="results" class="result hidden">  
+            <h2>Production Results</h2>  
+                
+            <div class="result-grid">  
+                <div class="result-item">  
+                    <h4>Material Properties</h4>  
+                    <p><strong>Cardstock Area:</strong> <span id="cardstockArea"></span> in²</p>  
+                    <p><strong>Absorption Rate:</strong> <span id="absorptionRate"></span> oz/in²</p>  
+                    <p><strong>Adjusted Absorption:</strong> <span id="adjustedAbsorption"></span></p>  
+                    <p><strong>Fresheners per Cardstock:</strong> <span id="freshenersPerCardstock"></span></p>  
+                    <p><strong>Total Fresheners:</strong> <span id="totalFresheners"></span></p>
+                </div>  
+                    
+                <div class="result-item">  
+                    <h4>Oil Requirements</h4>  
+                    <p><strong>Total Oil Needed:</strong> <span id="totalOil"></span> oz</p>  
+                    <p><strong>Fragrance Oil:</strong> <span id="fragranceOil"></span> oz</p>  
+                    <p><strong>Carrier Oil:</strong> <span id="carrierOilAmount"></span> oz</p>  
+                    <p><strong>Oil per Freshener:</strong> <span id="oilPerFreshener"></span> oz</p>  
+                </div>  
+                    
+                <div class="result-item">  
+                    <h4>Cost Analysis</h4>  
+                    <p><strong>Fragrance Cost:</strong> <span id="fragranceCost"></span></p>  
+                    <p><strong>Carrier Cost:</strong> <span id="carrierCost"></span></p>  
+                    <p><strong>Cardstock Cost:</strong> <span id="cardstockCost"></span></p>
+                    <p><strong>Total Production Cost:</strong> <span id="totalCost" class="highlight"></span></p>  
+                    <p><strong>Cost per Freshener:</strong> <span id="costPerFreshener" class="highlight"></span></p>  
+                </div>  
+                    
+                <div class="result-item">  
+                    <h4>Performance</h4>  
+                    <p><strong>Estimated Longevity:</strong> <span id="estimatedLongevity"></span> days</p>  
+                    <p><strong>Daily Oil Loss:</strong> <span id="dailyOilLoss"></span> oz/day</p>  
+                    <p><strong>Match to Desired Longevity:</strong> <span id="longevityMatch"></span></p>  
+                    <p><strong>Recommended Adjustment:</strong> <span id="recommendedAdjustment"></span></p>  
+                </div>  
+            </div>  
+            
+            <div class="result-item" style="margin-top: 20px;">
+                <h4>Pricing & Profit Analysis</h4>
+                <p><strong>Cost per Freshener:</strong> <span id="costPerFreshenerProfit"></span></p>
+                <p><strong>Selling Price per Freshener:</strong> <span id="sellingPriceResult" class="highlight-profit"></span></p>
+                <p><strong>Profit per Freshener:</strong> <span id="profitPerFreshener" class="highlight-profit"></span></p>
+                <p><strong>Profit Margin:</strong> <span id="profitMarginResult" class="highlight-profit"></span></p>
+                <p><strong>Total Revenue:</strong> <span id="totalRevenue" class="highlight-profit"></span></p>
+                <p><strong>Total Profit:</strong> <span id="totalProfit" class="highlight-profit"></span></p>
+            </div>
+
+            <div class="result-item" style="margin-top: 20px;">
+                <h4>Production Timeline</h4>
+                <p><strong>Batch Processing:</strong> <span id="batchDetails"></span></p>
+                <p><strong>Total Preparation Time:</strong> <span id="totalPrepTime" class="highlight-time"></span></p>
+                <p><strong>Curing Time:</strong> <span id="totalCuringTime" class="highlight-time"></span></p>
+                <p><strong>Packaging Time:</strong> <span id="packagingTimeResult"></span></p>
+                <p><strong>Total Production Time:</strong> <span id="totalProductionTime" class="highlight-time"></span></p>
+                <p><strong>Estimated Completion Time:</strong> <span id="estimatedCompletion" class="highlight-time"></span></p>
+                <p><strong>Estimated Ship Date:</strong> <span id="estimatedShipDate" class="highlight-time"></span></p>
+            </div>
+            
+            <div class="labor-cost-analysis">
+                <h4>Labor Cost Analysis</h4>
+                <div class="labor-cost-grid">
+                    <div class="labor-cost-item">
+                        <h4>Labor Costs</h4>
+                        <p><strong>Preparation Time Cost:</strong> <span id="prepTimeCost" class="highlight-labor"></span></p>
+                        <p><strong>Packaging Time Cost:</strong> <span id="packagingCost" class="highlight-labor"></span></p>
+                        <p><strong>Total Labor Cost:</strong> <span id="totalLaborCost" class="highlight-labor"></span></p>
+                        <p><strong>Labor Cost per Freshener:</strong> <span id="laborCostPerFreshener" class="highlight-labor"></span></p>
+                    </div>
+                    
+                    <div class="labor-cost-item">
+                        <h4>Profit After Labor</h4>
+                        <p><strong>Total Cost with Labor:</strong> <span id="totalCostWithLabor" class="highlight-labor"></span></p>
+                        <p><strong>Cost per Freshener with Labor:</strong> <span id="costPerFreshenerWithLabor" class="highlight-labor"></span></p>
+                        <p><strong>Profit per Freshener After Labor:</strong> <span id="profitAfterLabor" class="highlight-labor"></span></p>
+                        <p><strong>Total Profit After Labor:</strong> <span id="totalProfitAfterLabor" class="highlight-labor"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline">
+                <h4>Production Timeline Breakdown</h4>
+                <div id="timelineItems"></div>
+            </div>
+            
+            <div class="calendar">
+                <h4>Production Calendar</h4>
+                <div class="calendar-header">
+                    <button id="prevMonth">❮</button>
+                    <span id="calendarMonthYear"></span>
+                    <button id="nextMonth">❯</button>
+                </div>
+                <div class="calendar-grid" id="calendarDaysHeader"></div>
+                <div class="calendar-grid" id="calendarDays"></div>
+            </div>
+                
+            <div id="extraLongevityBreakdown" class="hidden" style="margin-top: 20px;">  
+                <h4>Extra Longevity Blend Breakdown</h4>  
+                <div class="result-grid">  
+                    <div class="result-item">  
+                        <p><strong>IPM Amount:</strong> <span id="ipmAmount"></span> oz</p>  
+                        <p><strong>IPM Cost:</strong> <span id="ipmCost"></span></p>  
+                    </div>  
+                    <div class="result-item">  
+                        <p><strong>DPG Amount:</strong> <span id="dpgAmount"></span> oz</p>  
+                        <p><strong>DPG Cost:</strong> <span id="dpgCost"></span></p>  
+                    </div>  
+                </div>  
+            </div>  
+            
+            <div id="dpgFcoBreakdown" class="hidden" style="margin-top: 20px;">  
+                <h4>DPG + FCO Blend Breakdown</h4>  
+                <div class="result-grid">  
+                    <div class="result-item">  
+                        <p><strong>DPG Amount:</strong> <span id="dpgFco_dpgAmount"></span> oz</p>  
+                        <p><strong>DPG Cost:</strong> <span id="dpgFco_dpgCost"></span></p>  
+                    </div>  
+                    <div class="result-item">  
+                        <p><strong>FCO Amount:</strong> <span id="dpgFco_fcoAmount"></span> oz</p>  
+                        <p><strong>FCO Cost:</strong> <span id="dpgFco_fcoCost"></span></p>  
+                    </div>  
+                </div>  
+            </div>  
+            
+            <div class="chart-container">
+                <h3 class="chart-title">Scent Performance Summary</h3>
+                <canvas id="summaryChart"></canvas>
+            </div>
+            
+            <div class="pdf-preview">
+                <h3>PDF Report Preview</h3>
+                <div class="pdf-header">
+                    <h2>Air Freshener Production Report</h2>
+                    <p>Generated on: <span id="pdfDatePreview"></span></p>
+                </div>
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Order Information</div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Order Name:</div>
+                        <div class="pdf-value" id="pdfOrderName"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Order Type:</div>
+                        <div class="pdf-value" id="pdfOrderType"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Due Date:</div>
+                        <div class="pdf-value" id="pdfDueDate"></div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Production Summary</div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Total Fresheners:</div>
+                        <div class="pdf-value" id="pdfTotalFresheners"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Total Cost:</div>
+                        <div class="pdf-value" id="pdfTotalCost"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Cost per Freshener:</div>
+                        <div class="pdf-value pdf-highlight" id="pdfCostPerFreshener"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Estimated Longevity:</div>
+                        <div class="pdf-value" id="pdfLongevity"></div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Financial Summary</div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Selling Price:</div>
+                        <div class="pdf-value pdf-highlight" id="pdfSellingPrice"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Profit Margin:</div>
+                        <div class="pdf-value pdf-highlight" id="pdfProfitMargin"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Total Revenue:</div>
+                        <div class="pdf-value pdf-highlight" id="pdfTotalRevenue"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Total Profit:</div>
+                        <div class="pdf-value pdf-highlight" id="pdfTotalProfit"></div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <div class="pdf-section-title">Timeline</div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Estimated Completion:</div>
+                        <div class="pdf-value" id="pdfCompletion"></div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-label">Estimated Ship Date:</div>
+                        <div class="pdf-value" id="pdfShipDate"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    
+    <script>
+        // TAB SWITCHING
+        function openTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.calculator').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            // Show selected tab
+            document.getElementById(tabName).style.display = 'block';
+        }
+    </script>
 </body>
 </html>
